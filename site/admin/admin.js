@@ -976,7 +976,7 @@
       err.textContent =
         "Этот сервер не отдаёт API входа. В корне проекта выполните npm start и откройте http://127.0.0.1:8787/site/admin/ — обычный npx serve здесь не подходит.";
     } else if (e && e.code === "bad_password") {
-      err.textContent = "Неверный пароль. По умолчанию: admin (или значение ADMIN_PASSWORD).";
+      err.textContent = "Неверный пароль. Проверьте значение ADMIN_PASSWORD на сервере.";
     } else {
       err.textContent = "Вход не удался. Обновите страницу и попробуйте снова.";
     }

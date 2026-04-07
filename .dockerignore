@@ -1,0 +1,14 @@
+.git
+.gitignore
+.cursor
+node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.env
+.env.local
+deploy
+tools
+brand/node_modules
+

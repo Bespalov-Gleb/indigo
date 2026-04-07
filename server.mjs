@@ -1,7 +1,7 @@
 /**
  * Статика сайта + API админки (сохранение JSON в site/data).
  * Запуск из корня репозитория: npm start
- * Пароль: переменная ADMIN_PASSWORD (по умолчанию admin — смените в проде).
+ * Секреты и чувствительные настройки читаются из переменных окружения.
  */
 import http from "http";
 import fs from "fs";
@@ -15,10 +15,40 @@ const DATA_DIR = path.join(ROOT, "site", "data");
 const CALC_FILE = path.join(DATA_DIR, "calculator.json");
 const PORTFOLIO_FILE = path.join(DATA_DIR, "portfolio.json");
 
+function loadEnvFile(filePath) {
+  if (!fs.existsSync(filePath)) return;
+  const src = fs.readFileSync(filePath, "utf8");
+  src.split(/\r?\n/).forEach((line) => {
+    const raw = line.trim();
+    if (!raw || raw.startsWith("#")) return;
+    const idx = raw.indexOf("=");
+    if (idx < 1) return;
+    const key = raw.slice(0, idx).trim();
+    let val = raw.slice(idx + 1).trim();
+    if (
+      (val.startsWith('"') && val.endsWith('"')) ||
+      (val.startsWith("'") && val.endsWith("'"))
+    ) {
+      val = val.slice(1, -1);
+    }
+    if (!(key in process.env)) process.env[key] = val;
+  });
+}
+
+loadEnvFile(path.join(ROOT, ".env"));
+
 const PORT = Number(process.env.PORT) || 8787;
 const HOST = process.env.HOST || "0.0.0.0";
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "admin";
 const NODE_ENV = process.env.NODE_ENV || "development";
+const CORS_ORIGIN = process.env.CORS_ORIGIN || "";
+const ADMIN_PASSWORD_RAW = process.env.ADMIN_PASSWORD;
+
+if (!ADMIN_PASSWORD_RAW || !String(ADMIN_PASSWORD_RAW).trim()) {
+  console.error("[FATAL] ADMIN_PASSWORD is required. Set it in environment (.env for local use).");
+  process.exit(1);
+}
+
+const ADMIN_PASSWORD = String(ADMIN_PASSWORD_RAW).trim();
 
 const MIME = {
   ".html": "text/html; charset=utf-8",
@@ -37,8 +67,9 @@ const MIME = {
 
 const tokens = new Set();
 
-if (NODE_ENV === "production" && String(ADMIN_PASSWORD).trim() === "admin") {
-  console.warn("[WARN] ADMIN_PASSWORD uses default value 'admin'. Set a strong password in production.");
+if (NODE_ENV === "production" && ADMIN_PASSWORD.toLowerCase() === "admin") {
+  console.error("[FATAL] ADMIN_PASSWORD cannot be 'admin' in production.");
+  process.exit(1);
 }
 
 function parseBody(req) {
@@ -88,6 +119,18 @@ function commonHeaders(contentType) {
   };
 }
 
+function buildCorsHeaders(req) {
+  if (!CORS_ORIGIN) {
+    if (NODE_ENV === "production") return {};
+    return { "Access-Control-Allow-Origin": "*" };
+  }
+  const origin = req.headers.origin;
+  if (origin && origin === CORS_ORIGIN) {
+    return { "Access-Control-Allow-Origin": origin, Vary: "Origin" };
+  }
+  return { "Access-Control-Allow-Origin": CORS_ORIGIN, Vary: "Origin" };
+}
+
 function safeJoin(root, urlPath) {
   const decoded = decodeURIComponent(urlPath.split("?")[0]);
   const rel = decoded.replace(/^\/+/, "");
@@ -126,8 +169,9 @@ const server = http.createServer(async (req, res) => {
   const pathname = normPath(url.pathname);
 
   if (req.method === "OPTIONS") {
+    const corsHeaders = buildCorsHeaders(req);
     res.writeHead(204, {
-      "Access-Control-Allow-Origin": "*",
+      ...corsHeaders,
       "Access-Control-Allow-Methods": "GET, PUT, POST, OPTIONS",
       "Access-Control-Allow-Headers": "Content-Type, Authorization",
     });
@@ -135,7 +179,7 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  const cors = { "Access-Control-Allow-Origin": "*" };
+  const cors = buildCorsHeaders(req);
 
   try {
     if (req.method === "GET" && pathname === "/healthz") {
@@ -262,5 +306,6 @@ server.listen(PORT, HOST, () => {
   console.log(`Админка → http://127.0.0.1:${PORT}/site/admin/`);
   console.log(`Healthcheck → http://127.0.0.1:${PORT}/healthz`);
   console.log(`HOST=${HOST} NODE_ENV=${NODE_ENV}`);
-  console.log(`ADMIN_PASSWORD=${ADMIN_PASSWORD === "admin" ? "admin (смените через env)" : "(задан)"}`);
+  console.log(`CORS_ORIGIN=${CORS_ORIGIN || "(auto: * in dev, disabled in production)"}`);
+  console.log("ADMIN_PASSWORD=(from env)");
 });

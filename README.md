@@ -25,9 +25,10 @@ npm start
 - `NODE_ENV=production`
 - `HOST=0.0.0.0`
 - `PORT=8787` (или порт платформы)
+- `CORS_ORIGIN=https://dev-studio-indigo.ru`
 - `ADMIN_PASSWORD=<strong-password>`
 
-Важно: не оставляйте пароль по умолчанию `admin`.
+Важно: `ADMIN_PASSWORD` обязателен. Сервер не запустится без него.
 
 ## Деплой (универсально)
 
@@ -50,6 +51,33 @@ npm start
 ```bash
 npm run check
 ```
+
+## Docker
+
+Сборка и запуск контейнера:
+
+```bash
+docker build -t indigo-site .
+docker run -d --name indigo-site \
+  -p 8787:8787 \
+  -e NODE_ENV=production \
+  -e HOST=0.0.0.0 \
+  -e PORT=8787 \
+  -e CORS_ORIGIN=https://dev-studio-indigo.ru \
+  -e ADMIN_PASSWORD=<strong-password> \
+  indigo-site
+```
+
+Или через `docker compose`:
+
+```bash
+docker compose up -d --build
+```
+
+Проверка:
+
+- `http://127.0.0.1:8787/site/index.html`
+- `http://127.0.0.1:8787/healthz`
 
 ## Готовые шаблоны деплоя
 
