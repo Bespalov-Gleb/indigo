@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Кейс — INDIGO</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="icon" href="/brand/logo-indigo-mark.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="/site/css/main.css" />
+</head>
+<body>
+  <div class="noise" aria-hidden="true"></div>
+  <div class="grid-bg" aria-hidden="true"></div>
+
+  <header class="header">
+    <a class="logo" href="/site/index.html">
+      <img src="/brand/logo-indigo-on-dark.svg" width="172" height="32" alt="INDIGO" />
+    </a>
+    <nav class="nav" aria-label="Основная навигация">
+      <a href="/site/index.html#calculator">Калькулятор</a>
+      <a href="/site/portfolio.html">Портфолио</a>
+      <a href="/site/index.html#process">Процесс</a>
+    </nav>
+    <button type="button" class="btn btn--ghost header__cta" data-open-modal>Обсудить проект</button>
+  </header>
+
+  <main>
+    <article class="section case-page" data-case-root>
+      <p class="case-back reveal" data-reveal>
+        <a class="case-back__link" href="/site/portfolio.html">← Портфолио</a>
+      </p>
+
+      <header class="case-hero reveal" data-reveal>
+        <span class="case-hero__tag mono" data-case-tag></span>
+        <h1 class="case-hero__title" data-case-title></h1>
+        <p class="case-hero__stack mono" data-case-stack></p>
+        <p class="case-hero__lead" data-case-lead></p>
+      </header>
+
+      <section class="case-block reveal" data-reveal aria-labelledby="case-gallery-title">
+        <h2 class="case-block__title" id="case-gallery-title">Экраны и материалы</h2>
+        <p class="case-block__sub">Галерея экранов проекта с ключевыми пользовательскими сценариями.</p>
+        <div class="case-gallery" data-case-gallery></div>
+      </section>
+
+      <section class="case-block reveal" data-reveal aria-labelledby="case-video-title">
+        <h2 class="case-block__title" id="case-video-title">Видео</h2>
+        <div data-case-video></div>
+      </section>
+
+      <section class="case-block reveal" data-reveal aria-labelledby="case-links-title">
+        <h2 class="case-block__title" id="case-links-title">Ссылки</h2>
+        <div class="case-links" data-case-links></div>
+      </section>
+    </article>
+
+    <div class="section case-missing" data-case-missing hidden>
+      <h1 class="case-missing__title">Кейс не найден</h1>
+      <p class="case-missing__text">Проверьте адрес или вернитесь в портфолио.</p>
+      <p class="case-missing__actions">
+        <a class="btn btn--primary" href="/site/portfolio.html">Портфолио</a>
+        <a class="btn btn--ghost" href="/site/index.html">Главная</a>
+      </p>
+    </div>
+
+    <footer class="footer">
+      <img src="/brand/logo-indigo-on-dark.svg" width="120" height="22" alt="" />
+      <p class="footer__copy mono">© INDIGO · студия разработки</p>
+    </footer>
+  </main>
+
+  <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" hidden>
+    <div class="modal__backdrop" data-close-modal tabindex="-1"></div>
+    <div class="modal__panel">
+      <button type="button" class="modal__close" data-close-modal aria-label="Закрыть">×</button>
+      <h2 class="modal__title" id="modal-title">Заявка</h2>
+      <p class="modal__intro">Кратко опишите задачу и оставьте <strong>хотя бы один</strong> способ связи.</p>
+      <form class="form" id="lead-form" novalidate>
+        <input type="hidden" name="estimate" id="form-estimate" value="" />
+        <label class="field">
+          <span class="field__label">Описание проекта</span>
+          <textarea class="field__textarea" name="description" rows="4" required placeholder="Цели, аудитория, референсы, дедлайн…"></textarea>
+        </label>
+        <div class="form__contacts">
+          <label class="field">
+            <span class="field__label">Email</span>
+            <input type="email" class="field__input" name="email" autocomplete="email" placeholder="you@company.ru" />
+          </label>
+          <label class="field">
+            <span class="field__label">Telegram</span>
+            <input type="text" class="field__input" name="telegram" autocomplete="off" placeholder="@username" />
+          </label>
+          <label class="field">
+            <span class="field__label">ВКонтакте</span>
+            <input type="text" class="field__input" name="vk" autocomplete="off" placeholder="Ссылка или id" />
+          </label>
+        </div>
+        <p class="form__error mono" id="form-error" role="alert" hidden>Укажите email, Telegram или ВК.</p>
+        <button type="submit" class="btn btn--primary btn--wide">Отправить</button>
+      </form>
+      <p class="modal__success mono" id="form-success" hidden>Спасибо! Заявка отправлена. Мы свяжемся с вами в ближайшее время.</p>
+    </div>
+  </div>
+
+  <script src="/site/js/main.js"></script>
+  <script src="/site/js/case-page.js"></script>
+</body>
+</html>

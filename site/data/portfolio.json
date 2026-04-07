@@ -1,0 +1,362 @@
+{
+  "version": 1,
+  "order": [
+    "booking",
+    "support-bot",
+    "mobile-client",
+    "b2b-portal",
+    "corporate-landing",
+    "sales-bot",
+    "field-app",
+    "analytics-dashboard",
+    "alerts-bot"
+  ],
+  "homeSlugs": [
+    "booking",
+    "support-bot",
+    "mobile-client"
+  ],
+  "cases": {
+    "booking": {
+      "title": "Сервис бронирования",
+      "tag": "web",
+      "stack": "React · Node · оплаты",
+      "lead": "Веб-сервис для онлайн-записи: личный кабинет пользователя, календарь слотов, напоминания и приём оплат. Ниже — макеты экранов (прототип), встроенное тестовое видео и ссылки-заглушки.",
+      "gallery": [
+        {
+          "variant": "",
+          "caption": "Личный кабинет — предстоящие записи"
+        },
+        {
+          "variant": "b",
+          "caption": "Выбор даты и свободного слота"
+        },
+        {
+          "variant": "c",
+          "caption": "Оплата и подтверждение брони"
+        }
+      ],
+      "video": {
+        "youtube": "M7lc1UVf-VE",
+        "note": "Пример встраивания YouTube; в реальном кейсе — запись демо продукта."
+      },
+      "links": [
+        {
+          "label": "Демо-стенд",
+          "href": "https://example.com/demo",
+          "external": true
+        },
+        {
+          "label": "Документация API",
+          "href": "https://example.com/docs",
+          "external": true
+        }
+      ],
+      "category": "web",
+      "excerpt": "Личный кабинет, слоты, уведомления и интеграция с платёжным провайдером.",
+      "mediaVariant": "",
+      "meta": [
+        "демо",
+        "видео"
+      ]
+    },
+    "support-bot": {
+      "title": "Телеграм-бот поддержки",
+      "tag": "bot",
+      "stack": "Python · LLM pipeline",
+      "lead": "Бот первой линии: ответы по базе знаний, эскалация на оператора при низкой уверенности, логирование диалогов. Галерея — схемы экранов и диалогов (плейсхолдеры).",
+      "gallery": [
+        {
+          "variant": "b",
+          "caption": "Стартовое меню и быстрые темы"
+        },
+        {
+          "variant": "f",
+          "caption": "Сценарий эскалации к оператору"
+        }
+      ],
+      "video": null,
+      "links": [
+        {
+          "label": "Открыть бота",
+          "href": "https://t.me",
+          "external": true
+        },
+        {
+          "label": "Описание сценариев (PDF)",
+          "href": "https://example.com/case-support.pdf",
+          "external": true
+        }
+      ],
+      "category": "bot",
+      "excerpt": "Маршрутизация обращений, база знаний и эскалация на оператора.",
+      "mediaVariant": "b",
+      "meta": [
+        "бот",
+        "кейс"
+      ]
+    },
+    "mobile-client": {
+      "title": "Мобильный клиент",
+      "tag": "app",
+      "stack": "Flutter · REST",
+      "lead": "Кроссплатформенное приложение с офлайн-черновиками, push и синхронизацией. Скриншоты ниже — стилизованные заглушки под будущие реальные кадры из сторов.",
+      "gallery": [
+        {
+          "variant": "c",
+          "caption": "Главный экран и лента"
+        },
+        {
+          "variant": "g",
+          "caption": "Форма в офлайн-режиме"
+        },
+        {
+          "variant": "h",
+          "caption": "Настройки уведомлений"
+        }
+      ],
+      "video": {
+        "youtube": "M7lc1UVf-VE",
+        "note": "Здесь может быть screen recording из симулятора."
+      },
+      "links": [
+        {
+          "label": "App Store",
+          "href": "https://apps.apple.com",
+          "external": true
+        },
+        {
+          "label": "Google Play",
+          "href": "https://play.google.com",
+          "external": true
+        }
+      ],
+      "category": "app",
+      "excerpt": "Офлайн-черновики, пуши и синхронизация с облачным бэкендом.",
+      "mediaVariant": "c",
+      "meta": [
+        "store",
+        "скриншоты"
+      ]
+    },
+    "b2b-portal": {
+      "title": "B2B-портал заказов",
+      "tag": "web",
+      "stack": "Vue · микросервисы",
+      "lead": "Портал для оптовых клиентов: каталог с персональными прайсами, корзина, статусы отгрузки, выгрузка в учётную систему.",
+      "gallery": [
+        {
+          "variant": "d",
+          "caption": "Каталог и фильтры"
+        },
+        {
+          "variant": "e",
+          "caption": "Корзина и условия поставки"
+        }
+      ],
+      "video": null,
+      "links": [
+        {
+          "label": "Staging",
+          "href": "https://example.com/staging",
+          "external": true
+        },
+        {
+          "label": "Интеграция 1С",
+          "href": "https://example.com/1c",
+          "external": true
+        }
+      ],
+      "category": "web",
+      "excerpt": "Каталог с прайс-листами, корзина, статусы отгрузки и выгрузка в 1С.",
+      "mediaVariant": "d",
+      "meta": [
+        "staging",
+        "видео"
+      ]
+    },
+    "corporate-landing": {
+      "title": "Корпоративный лендинг",
+      "tag": "web",
+      "stack": "SSG · аналитика",
+      "lead": "Статический лендинг с формами лидов, событиями в аналитике и быстрой отдачей без тяжёлого CMS.",
+      "gallery": [
+        {
+          "variant": "e",
+          "caption": "Первый экран и УТП"
+        },
+        {
+          "variant": "",
+          "caption": "Блок услуг и кейсы"
+        }
+      ],
+      "video": null,
+      "links": [
+        {
+          "label": "Сайт",
+          "href": "https://example.com",
+          "external": true
+        },
+        {
+          "label": "Отчёт по целям",
+          "href": "https://example.com/goals",
+          "external": true
+        }
+      ],
+      "category": "web",
+      "excerpt": "Быстрая витрина услуг, формы лидов и события в аналитике без тяжёлого CMS.",
+      "mediaVariant": "e",
+      "meta": [
+        "сайт",
+        "метрика"
+      ]
+    },
+    "sales-bot": {
+      "title": "Бот продаж в мессенджере",
+      "tag": "bot",
+      "stack": "Node · CRM webhook",
+      "lead": "Воронка в мессенджере: квалификация, запись на звонок, создание лида в CRM по webhook.",
+      "gallery": [
+        {
+          "variant": "f",
+          "caption": "Ветвление по ответам"
+        }
+      ],
+      "video": {
+        "youtube": "M7lc1UVf-VE",
+        "note": "Запись прохождения сценария бота."
+      },
+      "links": [
+        {
+          "label": "Схема флоу",
+          "href": "https://example.com/flow",
+          "external": true
+        },
+        {
+          "label": "Webhook CRM",
+          "href": "https://example.com/webhook",
+          "external": true
+        }
+      ],
+      "category": "bot",
+      "excerpt": "Квалификация лида, запись на звонок и передача карточки в CRM.",
+      "mediaVariant": "f",
+      "meta": [
+        "флоу",
+        "демо"
+      ]
+    },
+    "field-app": {
+      "title": "Полевое приложение",
+      "tag": "app",
+      "stack": "Kotlin · карты",
+      "lead": "Мобильное приложение для выездных специалистов: чек-листы, фото, геометки, работа при плохой сети.",
+      "gallery": [
+        {
+          "variant": "g",
+          "caption": "Список заданий на день"
+        },
+        {
+          "variant": "d",
+          "caption": "Карта и точки визита"
+        }
+      ],
+      "video": null,
+      "links": [
+        {
+          "label": "Скачать APK (пример)",
+          "href": "https://example.com/app.apk",
+          "external": true
+        },
+        {
+          "label": "Политика данных",
+          "href": "https://example.com/privacy",
+          "external": true
+        }
+      ],
+      "category": "app",
+      "excerpt": "Чек-листы выезда, фотоотчёты и геометки даже при нестабильной сети.",
+      "mediaVariant": "g",
+      "meta": [
+        "apk",
+        "кейс"
+      ]
+    },
+    "analytics-dashboard": {
+      "title": "Дашборд аналитики",
+      "tag": "web",
+      "stack": "React · витрина данных",
+      "lead": "Внутренний дашборд: срезы по воронке, экспорт CSV, роли и ограничение видимости метрик по отделам.",
+      "gallery": [
+        {
+          "variant": "h",
+          "caption": "Обзор KPI"
+        },
+        {
+          "variant": "b",
+          "caption": "Детализация по источникам"
+        },
+        {
+          "variant": "",
+          "caption": "Настройка отчёта и экспорт"
+        }
+      ],
+      "video": null,
+      "links": [
+        {
+          "label": "Скриншоты (Figma)",
+          "href": "https://www.figma.com",
+          "external": true
+        },
+        {
+          "label": "Доступ к демо",
+          "href": "https://example.com/demo-dash",
+          "external": true
+        }
+      ],
+      "category": "web",
+      "excerpt": "Срезы по воронке, экспорт CSV и роли доступа для отделов.",
+      "mediaVariant": "h",
+      "meta": [
+        "скриншоты",
+        "видео"
+      ]
+    },
+    "alerts-bot": {
+      "title": "Уведомления и алерты",
+      "tag": "bot",
+      "stack": "Python · очереди",
+      "lead": "Боты и каналы для дайджестов мониторинга: пороги, антиспам (муфты), доставка в Slack и Telegram.",
+      "gallery": [
+        {
+          "variant": "",
+          "caption": "Пример карточки алерта"
+        },
+        {
+          "variant": "c",
+          "caption": "Настройка подписок"
+        }
+      ],
+      "video": null,
+      "links": [
+        {
+          "label": "Архитектура (схема)",
+          "href": "https://example.com/arch",
+          "external": true
+        },
+        {
+          "label": "Runbook",
+          "href": "https://example.com/runbook",
+          "external": true
+        }
+      ],
+      "category": "bot",
+      "excerpt": "Дайджесты из мониторинга в Slack и Telegram с порогами и муфтами.",
+      "mediaVariant": "",
+      "meta": [
+        "архитектура",
+        "схема"
+      ]
+    }
+  }
+}

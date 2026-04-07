@@ -1,0 +1,148 @@
+{
+  "version": 1,
+  "roundingRub": 10000,
+  "maxAddonQty": 12,
+  "types": [
+    {
+      "id": "landing",
+      "label": "Лендинг / маркетинговый сайт",
+      "min": 120000,
+      "max": 280000,
+      "weeksMin": 3,
+      "weeksMax": 8,
+      "enabled": true,
+      "addons": {
+        "payments": {
+          "enabled": true,
+          "mode": "once",
+          "label": "Платежи",
+          "price": 90000,
+          "weeks": 2,
+          "summaryName": "платежи"
+        },
+        "admin": {
+          "enabled": true,
+          "mode": "qty",
+          "label": "Админ-панель",
+          "price": 120000,
+          "weeks": 3,
+          "summaryName": "админ"
+        },
+        "integrations": {
+          "enabled": true,
+          "mode": "qty",
+          "label": "Интеграции (CRM, API)",
+          "price": 150000,
+          "weeks": 3,
+          "summaryName": "интеграции"
+        }
+      }
+    },
+    {
+      "id": "webapp",
+      "label": "Веб-сервис / личный кабинет",
+      "min": 350000,
+      "max": 1200000,
+      "weeksMin": 8,
+      "weeksMax": 24,
+      "enabled": true,
+      "addons": {
+        "payments": {
+          "enabled": true,
+          "mode": "once",
+          "label": "Платежи",
+          "price": 120000,
+          "weeks": 2,
+          "summaryName": "платежи"
+        },
+        "admin": {
+          "enabled": true,
+          "mode": "qty",
+          "label": "Админ-панель",
+          "price": 140000,
+          "weeks": 4,
+          "summaryName": "админ"
+        },
+        "integrations": {
+          "enabled": true,
+          "mode": "qty",
+          "label": "Интеграции и API",
+          "price": 180000,
+          "weeks": 4,
+          "summaryName": "интеграции"
+        }
+      }
+    },
+    {
+      "id": "bot",
+      "label": "Telegram / чат-бот",
+      "min": 80000,
+      "max": 320000,
+      "weeksMin": 2,
+      "weeksMax": 10,
+      "enabled": true,
+      "addons": {
+        "payments": {
+          "enabled": false,
+          "mode": "once",
+          "label": "Платежи",
+          "price": 60000,
+          "weeks": 1,
+          "summaryName": "платежи"
+        },
+        "admin": {
+          "enabled": true,
+          "mode": "qty",
+          "label": "Админка / сценарии",
+          "price": 80000,
+          "weeks": 2,
+          "summaryName": "админ"
+        },
+        "integrations": {
+          "enabled": true,
+          "mode": "qty",
+          "label": "Интеграции (CRM, 1С, API)",
+          "price": 110000,
+          "weeks": 3,
+          "summaryName": "интеграции"
+        }
+      }
+    },
+    {
+      "id": "mobile",
+      "label": "Мобильное приложение",
+      "min": 450000,
+      "max": 1800000,
+      "weeksMin": 10,
+      "weeksMax": 28,
+      "enabled": true,
+      "addons": {
+        "payments": {
+          "enabled": true,
+          "mode": "once",
+          "label": "In-app платежи / подписки",
+          "price": 140000,
+          "weeks": 3,
+          "summaryName": "платежи"
+        },
+        "admin": {
+          "enabled": true,
+          "mode": "qty",
+          "label": "Админ-панель",
+          "price": 130000,
+          "weeks": 4,
+          "summaryName": "админ"
+        },
+        "integrations": {
+          "enabled": true,
+          "mode": "qty",
+          "label": "Бэкенд и API",
+          "price": 160000,
+          "weeks": 4,
+          "summaryName": "интеграции"
+        }
+      }
+    }
+  ],
+  "addons": {}
+}

@@ -1,0 +1,26 @@
+[Unit]
+Description=INDIGO website service
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/develop_studio
+Environment=NODE_ENV=production
+Environment=HOST=0.0.0.0
+Environment=PORT=8787
+EnvironmentFile=/var/www/develop_studio/.env
+ExecStart=/usr/bin/node /var/www/develop_studio/server.mjs
+Restart=always
+RestartSec=3
+KillSignal=SIGINT
+TimeoutStopSec=20
+
+# Логи в journalctl
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
+

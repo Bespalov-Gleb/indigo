@@ -1,0 +1,181 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>INDIGO — студия разработки ПО</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="icon" href="/brand/logo-indigo-mark.svg" type="image/svg+xml" />
+  <!-- Пути от корня сервера: иначе при URL /site без слэша ломаются относительные css/js -->
+  <link rel="stylesheet" href="/site/css/main.css" />
+</head>
+<body>
+  <div class="noise" aria-hidden="true"></div>
+  <div class="grid-bg" aria-hidden="true"></div>
+
+  <header class="header">
+    <a class="logo" href="/site/index.html">
+      <img src="/brand/logo-indigo-on-dark.svg" width="172" height="32" alt="INDIGO" />
+    </a>
+    <nav class="nav" aria-label="Основная навигация">
+      <a href="#calculator">Калькулятор</a>
+      <a href="/site/portfolio.html">Портфолио</a>
+      <a href="#process">Процесс</a>
+    </nav>
+    <button type="button" class="btn btn--ghost header__cta" data-open-modal>Обсудить проект</button>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero__glow" aria-hidden="true"></div>
+      <p class="hero__tag mono fade-in" data-animate style="--d:0.05s">
+        <span class="hero__tag-dot"></span> INDIGO · студия разработки
+      </p>
+      <h1 class="hero__title fade-in" data-animate style="--d:0.15s">
+        Проектируем и собираем<br />
+        <span class="hero__title-accent">цифровые продукты</span>
+      </h1>
+      <p class="hero__lead fade-in" data-animate style="--d:0.28s">
+        Веб, боты, мобильные клиенты — с прозрачными сроками, персональным проджектом
+        и без «перевода» с языка разработки.
+      </p>
+      <div class="hero__actions fade-in" data-animate style="--d:0.4s">
+        <a class="btn btn--primary" href="#calculator">Смета за 1 минуту</a>
+        <button type="button" class="btn btn--outline" data-open-modal>Оставить заявку</button>
+      </div>
+      <div class="hero__code mono fade-in" data-animate style="--d:0.52s" aria-hidden="true">
+        <span class="hero__code-line"><span class="kw">const</span> <span class="fn">delivery</span> = <span class="str">"pm-led"</span>;</span>
+        <span class="hero__code-line"><span class="kw">await</span> <span class="fn">ship</span>(quality, deadline);</span>
+      </div>
+    </section>
+
+    <section class="usp section" id="process">
+      <div class="section__head reveal" data-reveal>
+        <h2 class="section__title">Как мы работаем</h2>
+        <p class="section__sub">Три опоры — от первого скрининга до продакшена.</p>
+      </div>
+      <div class="usp__grid">
+        <article class="card reveal" data-reveal style="--i:0">
+          <div class="card__icon" aria-hidden="true">01</div>
+          <h3 class="card__title">Калькулятор сметы</h3>
+          <p class="card__text">Ориентир по бюджету и срокам для типовых сценариев — до созвона с командой.</p>
+        </article>
+        <article class="card reveal" data-reveal style="--i:1">
+          <div class="card__icon" aria-hidden="true">02</div>
+          <h3 class="card__title">Проджект рядом</h3>
+          <p class="card__text">Один менеджер от заявки до релиза — переводим ход работы на понятный язык, без жаргона.</p>
+        </article>
+        <article class="card reveal" data-reveal style="--i:2">
+          <div class="card__icon" aria-hidden="true">03</div>
+          <h3 class="card__title">Живое портфолио</h3>
+          <p class="card__text">Кейсы с демо, видео и ссылками на продукты — не «картинки из интернета».</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="calculator section" id="calculator">
+      <div class="section__head reveal" data-reveal>
+        <h2 class="section__title">Калькулятор</h2>
+        <p class="section__sub">Подвигайте параметры — оценка обновится мгновенно.<br />Это ориентир, не оферта.</p>
+      </div>
+      <div class="calc reveal" data-reveal>
+        <div class="calc__controls">
+          <div class="field custom-select" id="calc-type-wrap">
+            <span class="field__label" id="calc-type-lbl">Тип продукта</span>
+            <input type="hidden" id="calc-type" value="landing" />
+            <button
+              type="button"
+              class="custom-select__trigger"
+              id="calc-type-trigger"
+              aria-labelledby="calc-type-lbl"
+              aria-expanded="false"
+              aria-controls="calc-type-panel"
+              aria-haspopup="listbox"
+            >
+              <span class="custom-select__value" id="calc-type-display">Лендинг / маркетинговый сайт</span>
+              <span class="custom-select__caret" aria-hidden="true"></span>
+            </button>
+            <ul class="custom-select__panel" id="calc-type-panel" role="listbox" hidden></ul>
+          </div>
+          <fieldset class="field field--addons">
+            <legend class="field__label">Дополнительно</legend>
+            <p class="field__addon-hint">Один раз — кнопка «+»; несколько единиц — «+» открывает счётчик.</p>
+            <div id="calc-addons-list"></div>
+          </fieldset>
+        </div>
+        <div class="calc__result">
+          <div class="calc__numbers">
+            <div class="calc__block">
+              <span class="calc__label">Бюджет</span>
+              <span class="calc__value mono" id="calc-price">—</span>
+            </div>
+            <div class="calc__block">
+              <span class="calc__label">Срок</span>
+              <span class="calc__value mono" id="calc-time">—</span>
+            </div>
+          </div>
+          <button type="button" class="btn btn--primary btn--wide calc__submit" id="calc-request" data-open-modal>
+            Оставить заявку
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section class="portfolio section" id="portfolio">
+      <div class="section__head reveal" data-reveal>
+        <h2 class="section__title">Портфолио</h2>
+        <p class="section__sub">Несколько направлений — веб, боты, мобильные клиенты. Полный список кейсов и фильтр по типу — на отдельной странице.</p>
+        <p class="section__more">
+          <a class="section__more-link" href="/site/portfolio.html">Все кейсы</a>
+        </p>
+      </div>
+      <div class="portfolio__grid" id="home-portfolio-mount"></div>
+    </section>
+
+    <footer class="footer">
+      <img src="/brand/logo-indigo-on-dark.svg" width="120" height="22" alt="" />
+      <p class="footer__copy mono">© INDIGO · студия разработки</p>
+    </footer>
+  </main>
+
+  <!-- Modal -->
+  <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" hidden>
+    <div class="modal__backdrop" data-close-modal tabindex="-1"></div>
+    <div class="modal__panel">
+      <button type="button" class="modal__close" data-close-modal aria-label="Закрыть">×</button>
+      <h2 class="modal__title" id="modal-title">Заявка</h2>
+      <p class="modal__intro">Кратко опишите задачу и оставьте <strong>хотя бы один</strong> способ связи.</p>
+      <form class="form" id="lead-form" novalidate>
+        <input type="hidden" name="estimate" id="form-estimate" value="" />
+        <label class="field">
+          <span class="field__label">Описание проекта</span>
+          <textarea class="field__textarea" name="description" rows="4" required placeholder="Цели, аудитория, референсы, дедлайн…"></textarea>
+        </label>
+        <div class="form__contacts">
+          <label class="field">
+            <span class="field__label">Email</span>
+            <input type="email" class="field__input" name="email" autocomplete="email" placeholder="you@company.ru" />
+          </label>
+          <label class="field">
+            <span class="field__label">Telegram</span>
+            <input type="text" class="field__input" name="telegram" autocomplete="off" placeholder="@username" />
+          </label>
+          <label class="field">
+            <span class="field__label">ВКонтакте</span>
+            <input type="text" class="field__input" name="vk" autocomplete="off" placeholder="Ссылка или id" />
+          </label>
+        </div>
+        <p class="form__error mono" id="form-error" role="alert" hidden>Укажите email, Telegram или ВК.</p>
+        <button type="submit" class="btn btn--primary btn--wide">Отправить</button>
+      </form>
+      <p class="modal__success mono" id="form-success" hidden>Спасибо! Заявка отправлена. Мы свяжемся с вами в ближайшее время.</p>
+    </div>
+  </div>
+
+  <script src="/site/js/portfolio-app.js"></script>
+  <script src="/site/js/main.js"></script>
+</body>
+</html>

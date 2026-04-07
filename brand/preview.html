@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>INDIGO — предпросмотр логотипов</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: system-ui, sans-serif; color: #0d1b2a; }
+    section { padding: 2.5rem; }
+    .light { background: #f0f4f8; }
+    .dark { background: #0a1628; color: #e8eef5; }
+    h1 { font-size: 1rem; font-weight: 600; margin: 0 0 1rem; opacity: 0.85; }
+    .row { display: flex; flex-wrap: wrap; gap: 2rem; align-items: center; }
+    .row img { max-width: 100%; height: auto; }
+    .mark-wrap { padding: 1rem; border-radius: 8px; }
+    .light .mark-wrap { background: #fff; }
+    .dark .mark-wrap { background: #152238; }
+  </style>
+</head>
+<body>
+  <section class="light">
+    <h1>Светлый фон — logo-indigo.svg</h1>
+    <div class="row">
+      <img src="logo-indigo.svg" alt="INDIGO" width="300" height="56" />
+    </div>
+  </section>
+  <section class="dark">
+    <h1>Тёмный фон — logo-indigo-on-dark.svg</h1>
+    <div class="row">
+      <img src="logo-indigo-on-dark.svg" alt="INDIGO" width="300" height="56" />
+    </div>
+  </section>
+  <section class="light">
+    <h1>Только марка — logo-indigo-mark.svg</h1>
+    <div class="row">
+      <div class="mark-wrap">
+        <img src="logo-indigo-mark.svg" alt="INDIGO mark" width="40" height="48" />
+      </div>
+    </div>
+  </section>
+</body>
+</html>

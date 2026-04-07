@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Админка — INDIGO</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/site/css/main.css" />
+  <link rel="stylesheet" href="/site/admin/admin.css" />
+</head>
+<body class="admin-body">
+  <div class="noise" aria-hidden="true"></div>
+  <div class="grid-bg" aria-hidden="true"></div>
+
+  <div id="admin-login" class="admin-login">
+    <h1>Вход в админку</h1>
+    <p class="admin-hint" style="margin-top:0">
+      Откройте эту страницу по адресу вида
+      <strong class="mono">http://127.0.0.1:8787/site/admin/</strong>
+      после команды <span class="mono">npm start</span> в корне репозитория. Сохранение в <span class="mono">site/data/</span>.
+    </p>
+    <div class="admin-login__field">
+      <label for="admin-password">Пароль</label>
+      <input type="password" id="admin-password" autocomplete="current-password" />
+    </div>
+    <button type="button" class="admin-login__btn" id="admin-login-btn">Войти</button>
+    <p class="admin-login__hint">По умолчанию: <span class="mono">admin</span>. В проде задайте <span class="mono">ADMIN_PASSWORD</span>.</p>
+    <p id="admin-login-err" class="admin-msg admin-msg--err" hidden></p>
+  </div>
+
+  <div id="admin-app" class="admin" hidden>
+    <header class="admin__head">
+      <h1 class="admin__title">Админка INDIGO</h1>
+      <div class="admin__links">
+        <nav class="admin__nav" aria-label="Разделы">
+          <button type="button" class="is-active" data-tab="calc">Калькулятор</button>
+          <button type="button" data-tab="portfolio">Портфолио</button>
+        </nav>
+        <a href="/site/index.html">Сайт</a>
+        <button type="button" id="admin-logout" class="admin__nav admin__nav--text">Выйти</button>
+      </div>
+    </header>
+
+    <p id="admin-toast" class="admin-msg" hidden></p>
+
+    <section id="panel-calc" class="admin-panel" data-panel="calc">
+      <div class="admin-section">
+        <h2>Общие параметры</h2>
+        <div class="admin-grid admin-grid--2">
+          <div class="admin-field">
+            <label for="roundingRub">Округление бюджета (₽)</label>
+            <input type="number" id="roundingRub" min="1" step="1" />
+          </div>
+          <div class="admin-field">
+            <label for="maxAddonQty">Макс. количество (режим «количество»)</label>
+            <input type="number" id="maxAddonQty" min="1" max="99" step="1" />
+          </div>
+        </div>
+      </div>
+      <div class="admin-section">
+        <div class="admin-section__row">
+          <h2>Типы продуктов</h2>
+          <button type="button" class="admin-chip-btn" id="calc-type-add">+ Тип</button>
+        </div>
+        <p class="admin-hint">ID — латиница, цифры, дефис (как в коде). Снимите «Показывать в калькуляторе», чтобы скрыть тип на сайте.</p>
+        <div id="calc-types-mount"></div>
+      </div>
+      <div class="admin-actions">
+        <button type="button" class="primary" id="calc-save">Сохранить калькулятор</button>
+        <button type="button" id="calc-reload">Перезагрузить с сервера</button>
+      </div>
+    </section>
+
+    <section id="panel-portfolio" class="admin-panel" data-panel="portfolio" hidden>
+      <div class="admin-pf-toolbar">
+        <button type="button" class="primary" id="pf-save-all">Сохранить портфолио</button>
+        <button type="button" id="pf-new">Новый проект</button>
+        <button type="button" id="pf-reload">Перезагрузить</button>
+        <button type="button" id="pf-json-toggle" aria-expanded="false">Редактор JSON</button>
+      </div>
+      <div id="pf-json-panel" class="admin-pf-jsonpanel" hidden>
+        <p class="admin-hint">Для массовых правок или копирования. «Сохранить портфолио» записывает и форму, и это поле, если JSON открыт.</p>
+        <textarea id="portfolio-json" class="admin-json admin-json--short" spellcheck="false"></textarea>
+        <button type="button" id="portfolio-format">Форматировать JSON</button>
+      </div>
+      <div class="admin-pf-layout" id="pf-ui">
+        <aside class="admin-pf-aside">
+          <h2 class="admin-pf-aside-title">Проекты</h2>
+          <ul id="pf-list" class="admin-pf-list" role="list"></ul>
+          <div class="admin-pf-homeblock">
+            <h3 class="admin-pf-subtitle">На главной</h3>
+            <p class="admin-hint">Порядок карточек в блоке портфолио на лендинге.</p>
+            <ul id="pf-home-slugs" class="admin-pf-homelist"></ul>
+            <div class="admin-field">
+              <label for="pf-add-home">Добавить на главную</label>
+              <select id="pf-add-home"><option value="">— выберите проект —</option></select>
+            </div>
+          </div>
+        </aside>
+        <div class="admin-pf-main">
+          <div id="pf-placeholder" class="admin-pf-placeholder">
+            Выберите проект в списке слева или нажмите «Новый проект».
+          </div>
+          <div id="pf-editor" class="admin-pf-editor" hidden>
+            <div class="admin-pf-editor__head">
+              <button type="button" class="admin-pf-back" id="pf-back-list">← К списку</button>
+              <h2 id="pf-editor-title">Редактирование</h2>
+            </div>
+            <div class="admin-grid admin-grid--2">
+              <div class="admin-field">
+                <label for="pf-slug">Slug (URL)</label>
+                <input type="text" id="pf-slug" autocomplete="off" />
+              </div>
+              <div class="admin-field">
+                <label for="pf-title">Заголовок</label>
+                <input type="text" id="pf-title" />
+              </div>
+              <div class="admin-field">
+                <label for="pf-tag">Тег (карточка)</label>
+                <input type="text" id="pf-tag" placeholder="web / bot / app" />
+              </div>
+              <div class="admin-field">
+                <label for="pf-category">Фильтр категории</label>
+                <select id="pf-category">
+                  <option value="web">web</option>
+                  <option value="bot">bot</option>
+                  <option value="app">app</option>
+                </select>
+              </div>
+              <div class="admin-field admin-field--full">
+                <label for="pf-stack">Стек (строка под заголовком)</label>
+                <input type="text" id="pf-stack" />
+              </div>
+              <div class="admin-field admin-field--full">
+                <label for="pf-excerpt">Кратко (карточка)</label>
+                <textarea id="pf-excerpt" rows="2"></textarea>
+              </div>
+              <div class="admin-field">
+                <label for="pf-media">Вариант медиа-блока</label>
+                <select id="pf-media">
+                  <option value="">Базовый градиент</option>
+                  <option value="b">b</option>
+                  <option value="c">c</option>
+                  <option value="d">d</option>
+                  <option value="e">e</option>
+                  <option value="f">f</option>
+                  <option value="g">g</option>
+                  <option value="h">h</option>
+                </select>
+              </div>
+            </div>
+            <div class="admin-section admin-section--nested">
+              <h3>Мета-строка карточки</h3>
+              <div id="pf-meta-rows"></div>
+              <button type="button" class="admin-chip-btn" id="pf-meta-add">+ фрагмент</button>
+            </div>
+            <div class="admin-field admin-field--full">
+              <label for="pf-lead">Вводный текст (страница кейса)</label>
+              <textarea id="pf-lead" rows="4"></textarea>
+            </div>
+            <div class="admin-section admin-section--nested">
+              <h3>Галерея экранов</h3>
+              <div id="pf-gallery-rows"></div>
+              <button type="button" class="admin-chip-btn" id="pf-gallery-add">+ кадр</button>
+            </div>
+            <div class="admin-section admin-section--nested">
+              <h3>Видео</h3>
+              <label class="admin-field label inline"><input type="checkbox" id="pf-video-on" /> Встроить YouTube</label>
+              <div id="pf-video-fields" class="admin-grid admin-grid--2" style="margin-top:0.75rem">
+                <div class="admin-field">
+                  <label for="pf-video-id">ID ролика</label>
+                  <input type="text" id="pf-video-id" placeholder="M7lc1UVf-VE" />
+                </div>
+                <div class="admin-field admin-field--full">
+                  <label for="pf-video-note">Подпись под плеером</label>
+                  <input type="text" id="pf-video-note" />
+                </div>
+              </div>
+            </div>
+            <div class="admin-section admin-section--nested">
+              <h3>Ссылки</h3>
+              <div id="pf-link-rows"></div>
+              <button type="button" class="admin-chip-btn" id="pf-link-add">+ ссылка</button>
+            </div>
+            <div class="admin-actions">
+              <button type="button" class="primary" id="pf-apply-case">Применить к черновику</button>
+              <button type="button" id="pf-delete-case" class="admin-btn-danger">Удалить проект</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script src="/site/admin/admin.js"></script>
+</body>
+</html>

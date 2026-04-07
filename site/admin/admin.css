@@ -1,0 +1,860 @@
+.admin-body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: var(--sans, "IBM Plex Sans", system-ui, sans-serif);
+  background: var(--bg-deep, #050a12);
+  color: var(--text, #e8eef5);
+}
+
+.admin {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 2rem clamp(1rem, 4vw, 2rem) 4rem;
+}
+
+/* Сброс дефолтов кнопок (иначе в части браузеров — «белые кирпичи») */
+.admin-body button {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  appearance: none;
+  -webkit-appearance: none;
+  box-sizing: border-box;
+}
+
+.admin__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--stroke, rgba(100, 160, 220, 0.18));
+}
+
+.admin__title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.admin__nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.admin__nav button {
+  font: inherit;
+  font-weight: 600;
+  padding: 0.45rem 1rem;
+  border-radius: 999px;
+  border: 1px solid var(--stroke, rgba(100, 160, 220, 0.18));
+  background: rgba(91, 159, 212, 0.08);
+  color: var(--text-muted, rgba(232, 238, 245, 0.62));
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.admin__nav button:hover {
+  color: var(--text, #e8eef5);
+  border-color: var(--stroke-strong, rgba(120, 180, 255, 0.35));
+}
+
+.admin__nav button.is-active {
+  background: rgba(91, 159, 212, 0.18);
+  color: var(--accent-2, #7eb8e8);
+  border-color: rgba(91, 159, 212, 0.45);
+}
+
+button.admin__nav--text {
+  font: inherit;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  padding: 0.45rem 1rem;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  border: none;
+  background: transparent;
+  color: var(--text-muted, rgba(232, 238, 245, 0.62));
+}
+
+button.admin__nav--text:hover {
+  color: var(--text, #e8eef5);
+  background: rgba(91, 159, 212, 0.1);
+}
+
+.admin__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.admin__links a {
+  color: var(--accent, #5b9fd4);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9375rem;
+}
+
+.admin__links a:hover {
+  color: var(--accent-2, #7eb8e8);
+}
+
+.admin-panel[hidden] {
+  display: none !important;
+}
+
+.admin-login {
+  position: relative;
+  z-index: 100;
+  max-width: 360px;
+  margin: 4rem auto;
+  padding: 2rem;
+  border-radius: 12px;
+  border: 1px solid var(--stroke, rgba(100, 160, 220, 0.18));
+  background: var(--bg-elevated, #111f35);
+}
+
+.admin-login h1 {
+  margin: 0 0 1rem;
+  font-size: 1.25rem;
+}
+
+.admin-login__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 1rem;
+}
+
+.admin-login__field label {
+  font-size: 0.8125rem;
+  color: var(--text-muted, rgba(232, 238, 245, 0.62));
+}
+
+.admin-login__field input {
+  font: inherit;
+  padding: 0.6rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid var(--stroke, rgba(100, 160, 220, 0.18));
+  background: var(--bg-card, #152a45);
+  color: var(--text, #e8eef5);
+}
+
+.admin-login__btn {
+  width: 100%;
+  margin-top: 0.5rem;
+  padding: 0.65rem 1rem;
+  font: inherit;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  background: var(--accent, #5b9fd4);
+  color: #050a12;
+  cursor: pointer;
+}
+
+.admin-login__btn:hover {
+  filter: brightness(1.08);
+}
+
+.admin-login__btn:disabled {
+  opacity: 0.75;
+  cursor: wait;
+}
+
+.admin-login__hint {
+  margin: 1rem 0 0;
+  font-size: 0.75rem;
+  color: var(--text-muted, rgba(232, 238, 245, 0.62));
+  line-height: 1.45;
+}
+
+.admin-msg {
+  padding: 0.65rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  font-size: 0.9375rem;
+}
+
+.admin-msg--ok {
+  background: rgba(100, 200, 140, 0.12);
+  border: 1px solid rgba(100, 200, 140, 0.35);
+  color: #a8e0bc;
+}
+
+.admin-msg--err {
+  background: rgba(220, 100, 100, 0.12);
+  border: 1px solid rgba(220, 100, 100, 0.35);
+  color: #f0a8a8;
+}
+
+.admin-section h2 {
+  margin: 0 0 1rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.admin-fieldset {
+  margin: 0 0 1.25rem;
+  padding: 1rem 1.15rem;
+  border-radius: var(--radius, 12px);
+  border: 1px solid var(--stroke, rgba(100, 160, 220, 0.18));
+  background: rgba(91, 159, 212, 0.04);
+}
+
+.admin-fieldset legend {
+  padding: 0 0.35rem;
+  font-weight: 600;
+  font-size: 0.9375rem;
+}
+
+.admin-fieldset code {
+  font-family: var(--mono, "IBM Plex Mono", monospace);
+  font-size: 0.85em;
+  color: var(--accent-2, #7eb8e8);
+}
+
+.admin-grid {
+  display: grid;
+  gap: 0.75rem;
+}
+
+@media (min-width: 640px) {
+  .admin-grid--2 {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.admin-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.admin-field label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted, rgba(232, 238, 245, 0.62));
+}
+
+.admin-field input[type="text"],
+.admin-field input[type="number"] {
+  font: inherit;
+  padding: 0.5rem 0.65rem;
+  border-radius: 8px;
+  border: 1px solid var(--stroke, rgba(100, 160, 220, 0.18));
+  background: var(--bg-card, #152a45);
+  color: var(--text, #e8eef5);
+}
+
+.admin-field label.inline {
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 0.9375rem;
+}
+
+.admin-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.admin-actions button {
+  font: inherit;
+  font-weight: 600;
+  padding: 0.6rem 1.25rem;
+  border-radius: 8px;
+  border: 1px solid var(--stroke, rgba(100, 160, 220, 0.18));
+  background: rgba(91, 159, 212, 0.14);
+  color: var(--text, #e8eef5);
+  cursor: pointer;
+}
+
+.admin-actions button.primary {
+  background: var(--accent, #5b9fd4);
+  color: #050a12;
+  border-color: transparent;
+}
+
+.admin-actions button:hover {
+  filter: brightness(1.06);
+}
+
+.admin-json {
+  width: 100%;
+  min-height: 420px;
+  font-family: var(--mono, "IBM Plex Mono", monospace);
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  padding: 1rem;
+  border-radius: var(--radius, 12px);
+  border: 1px solid var(--stroke, rgba(100, 160, 220, 0.18));
+  background: var(--bg-card, #152a45);
+  color: var(--text, #e8eef5);
+  resize: vertical;
+  box-sizing: border-box;
+}
+
+.admin-hint {
+  margin: 0 0 1rem;
+  font-size: 0.875rem;
+  color: var(--text-muted, rgba(232, 238, 245, 0.62));
+  line-height: 1.5;
+}
+
+.admin-section__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.65rem 1rem;
+  margin-bottom: 0.65rem;
+}
+
+.admin-section__row h2 {
+  margin: 0;
+  flex: 0 1 auto;
+}
+
+.admin-chip-btn {
+  font: inherit;
+  font-weight: 600;
+  font-size: 0.8125rem;
+  padding: 0.5rem 1.1rem;
+  border-radius: 8px;
+  border: 1px solid rgba(91, 159, 212, 0.4);
+  background: rgba(91, 159, 212, 0.16);
+  color: var(--accent-2, #7eb8e8);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.15s;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2);
+}
+
+.admin-chip-btn:hover {
+  background: rgba(91, 159, 212, 0.28);
+  border-color: rgba(120, 180, 255, 0.55);
+  color: var(--text, #e8eef5);
+}
+
+.admin-chip-btn:active {
+  transform: translateY(1px);
+}
+
+.admin-chip-btn--small {
+  padding: 0.4rem 0.8rem;
+  font-size: 0.75rem;
+}
+
+/* Карточка «Тип» в калькуляторе */
+.admin-calc-legend {
+  padding: 0 0.35rem;
+  width: 100%;
+  max-width: 100%;
+}
+
+.admin-calc-legend__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1rem;
+  flex-wrap: wrap;
+}
+
+.admin-calc-legend__title {
+  font-weight: 600;
+  font-size: 0.9375rem;
+}
+
+.calc-type-remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  margin: 0;
+  padding: 0.45rem 0.75rem;
+  min-height: 2.25rem;
+  border-radius: 8px;
+  border: 1px solid rgba(220, 100, 100, 0.45);
+  background: rgba(220, 80, 80, 0.12);
+  color: #f0b0b0;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.calc-type-remove:hover:not(:disabled) {
+  background: rgba(220, 80, 80, 0.22);
+  border-color: rgba(255, 140, 140, 0.55);
+  color: #ffd4d4;
+}
+
+.calc-type-remove:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.calc-type-remove__icon {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+}
+
+.calc-type-remove__icon svg {
+  display: block;
+}
+
+.admin-calc-type__top {
+  display: grid;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+@media (min-width: 640px) {
+  .admin-calc-type__top {
+    grid-template-columns: 1fr 1fr;
+    align-items: end;
+  }
+}
+
+.admin-field__fake-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted, rgba(232, 238, 245, 0.62));
+}
+
+.admin-field--calc-enabled {
+  gap: 0.35rem;
+}
+
+.admin-field--calc-enabled label.inline {
+  margin: 0;
+}
+
+.admin-calc-type-addons {
+  margin-top: 1.25rem;
+  padding-top: 1.15rem;
+  border-top: 1px solid var(--stroke, rgba(100, 160, 220, 0.15));
+}
+
+.admin-calc-type-addons__hint {
+  margin-bottom: 1rem !important;
+}
+
+.admin-calc-type-addons__title {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.admin-fieldset--nested-addon {
+  margin-bottom: 1rem;
+  background: rgba(5, 10, 18, 0.25);
+}
+
+.admin-calc-addon-legend {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.calc-addon-remove {
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 6px;
+  border: 1px solid rgba(220, 100, 100, 0.4);
+  background: rgba(220, 80, 80, 0.1);
+  color: #f0b0b0;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.calc-addon-remove:hover {
+  background: rgba(220, 80, 80, 0.2);
+}
+
+.admin-field--full {
+  grid-column: 1 / -1;
+}
+
+@media (min-width: 640px) {
+  .admin-grid--2 .admin-field--full {
+    grid-column: 1 / -1;
+  }
+}
+
+.admin-field textarea {
+  font: inherit;
+  padding: 0.5rem 0.65rem;
+  border-radius: 8px;
+  border: 1px solid var(--stroke, rgba(100, 160, 220, 0.18));
+  background: var(--bg-card, #152a45);
+  color: var(--text, #e8eef5);
+  resize: vertical;
+  min-height: 3rem;
+}
+
+.admin-section--nested {
+  margin: 1.25rem 0;
+  padding-top: 1rem;
+  border-top: 1px solid var(--stroke, rgba(100, 160, 220, 0.12));
+}
+
+.admin-section--nested h3 {
+  margin: 0 0 0.75rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.admin-btn-danger {
+  border-color: rgba(220, 100, 100, 0.45) !important;
+  color: #f0a8a8 !important;
+  background: rgba(220, 80, 80, 0.1) !important;
+}
+
+.admin-pf-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem 0.75rem;
+  align-items: center;
+  margin-bottom: 1.25rem;
+}
+
+.admin-pf-toolbar button {
+  font: inherit;
+  font-weight: 600;
+  font-size: 0.875rem;
+  padding: 0.55rem 1.15rem;
+  border-radius: 8px;
+  border: 1px solid var(--stroke, rgba(100, 160, 220, 0.28));
+  background: rgba(91, 159, 212, 0.12);
+  color: var(--text, #e8eef5);
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.admin-pf-toolbar button:hover {
+  background: rgba(91, 159, 212, 0.2);
+  border-color: var(--stroke-strong, rgba(120, 180, 255, 0.4));
+}
+
+.admin-pf-toolbar button.primary {
+  background: var(--accent, #5b9fd4);
+  color: #050a12;
+  border-color: transparent;
+}
+
+.admin-pf-toolbar button.primary:hover {
+  filter: brightness(1.06);
+}
+
+.admin-panel button.primary {
+  background: var(--accent, #5b9fd4);
+  color: #050a12;
+  border-color: transparent;
+}
+
+.admin-panel button.primary:hover {
+  filter: brightness(1.06);
+}
+
+.admin-pf-jsonpanel > button,
+#portfolio-format {
+  font: inherit;
+  font-weight: 600;
+  font-size: 0.875rem;
+  padding: 0.5rem 1rem;
+  margin-top: 0.35rem;
+  border-radius: 8px;
+  border: 1px solid var(--stroke, rgba(100, 160, 220, 0.28));
+  background: rgba(91, 159, 212, 0.1);
+  color: var(--text, #e8eef5);
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.admin-pf-jsonpanel > button:hover,
+#portfolio-format:hover {
+  background: rgba(91, 159, 212, 0.18);
+  border-color: var(--stroke-strong, rgba(120, 180, 255, 0.35));
+}
+
+.admin-pf-jsonpanel {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  border-radius: var(--radius, 12px);
+  border: 1px solid var(--stroke, rgba(100, 160, 220, 0.18));
+  background: rgba(91, 159, 212, 0.04);
+}
+
+.admin-json--short {
+  min-height: 200px;
+  margin-bottom: 0.75rem;
+}
+
+.admin-pf-layout {
+  display: grid;
+  gap: 1.5rem;
+}
+
+@media (min-width: 900px) {
+  .admin-pf-layout {
+    grid-template-columns: minmax(240px, 280px) 1fr;
+    align-items: start;
+  }
+}
+
+.admin-pf-aside {
+  position: sticky;
+  top: 1rem;
+}
+
+.admin-pf-aside-title {
+  margin: 0 0 0.75rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.admin-pf-subtitle {
+  margin: 1.25rem 0 0.35rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.admin-pf-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.admin-pf-row {
+  display: flex;
+  align-items: stretch;
+  gap: 0.35rem;
+  margin-bottom: 0.35rem;
+}
+
+.admin-pf-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.2rem;
+  padding: 0.65rem 0.75rem;
+  border-radius: var(--radius-sm, 8px);
+  border: 1px solid var(--stroke, rgba(100, 160, 220, 0.18));
+  background: rgba(91, 159, 212, 0.05);
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.admin-pf-item:hover {
+  border-color: var(--stroke-strong, rgba(120, 180, 255, 0.35));
+}
+
+.admin-pf-item.is-active {
+  border-color: rgba(91, 159, 212, 0.55);
+  background: rgba(91, 159, 212, 0.12);
+}
+
+.admin-pf-item__title {
+  font-weight: 600;
+  font-size: 0.9375rem;
+  margin: 0;
+  line-height: 1.3;
+}
+
+.admin-pf-item__slug {
+  font-family: var(--mono, "IBM Plex Mono", monospace);
+  font-size: 0.72rem;
+  color: var(--text-muted, rgba(232, 238, 245, 0.62));
+}
+
+.admin-pf-item__actions {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.35rem;
+  flex-shrink: 0;
+  padding: 0.15rem 0;
+}
+
+.admin-pf-item__actions button {
+  font: inherit;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1;
+  padding: 0;
+  width: 2.35rem;
+  height: 2.35rem;
+  min-width: 2.35rem;
+  min-height: 2.35rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  border: 1px solid rgba(100, 160, 220, 0.35);
+  background: rgba(21, 42, 69, 0.9);
+  color: var(--accent-2, #7eb8e8);
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.admin-pf-item__actions button:hover {
+  color: var(--text, #e8eef5);
+  border-color: rgba(120, 180, 255, 0.5);
+  background: rgba(91, 159, 212, 0.2);
+}
+
+.admin-pf-item__actions button:active {
+  transform: scale(0.96);
+}
+
+.admin-pf-homelist {
+  list-style: none;
+  margin: 0 0 0.75rem;
+  padding: 0;
+}
+
+.admin-pf-homeitem {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-bottom: 0.35rem;
+  font-size: 0.875rem;
+}
+
+.admin-pf-homeitem span {
+  flex: 1;
+  font-family: var(--mono, "IBM Plex Mono", monospace);
+  font-size: 0.8rem;
+}
+
+.admin-pf-homeitem button {
+  font: inherit;
+  font-size: 0.75rem;
+  font-weight: 600;
+  min-width: 2rem;
+  min-height: 2rem;
+  padding: 0.2rem 0.45rem;
+  border-radius: 6px;
+  border: 1px solid rgba(100, 160, 220, 0.3);
+  background: rgba(21, 42, 69, 0.85);
+  color: var(--accent-2, #7eb8e8);
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.admin-pf-homeitem button:hover {
+  color: var(--text, #e8eef5);
+  border-color: rgba(120, 180, 255, 0.45);
+  background: rgba(91, 159, 212, 0.18);
+}
+
+.admin-pf-placeholder {
+  padding: 2rem 1.5rem;
+  text-align: center;
+  color: var(--text-muted, rgba(232, 238, 245, 0.62));
+  border: 1px dashed var(--stroke, rgba(100, 160, 220, 0.25));
+  border-radius: var(--radius, 12px);
+}
+
+.admin-pf-editor {
+  padding: 0.25rem 0 2rem;
+}
+
+.admin-pf-editor__head {
+  margin-bottom: 1.25rem;
+}
+
+.admin-pf-back {
+  font: inherit;
+  font-weight: 600;
+  padding: 0;
+  margin-bottom: 0.5rem;
+  border: none;
+  background: none;
+  color: var(--accent, #5b9fd4);
+  cursor: pointer;
+}
+
+.admin-pf-back:hover {
+  color: var(--accent-2, #7eb8e8);
+}
+
+.admin-pf-editor__head h2 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.admin-repeat-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.5rem;
+  align-items: end;
+  margin-bottom: 0.5rem;
+}
+
+@media (min-width: 640px) {
+  .admin-repeat-row--gal {
+    grid-template-columns: 120px 1fr auto;
+  }
+
+  .admin-repeat-row--link {
+    grid-template-columns: 1fr 1.5fr auto auto;
+  }
+}
+
+.admin-repeat-row .admin-field {
+  margin: 0;
+}
+
+.admin-repeat-row__remove {
+  font: inherit;
+  font-weight: 600;
+  font-size: 1rem;
+  line-height: 1;
+  min-width: 2.25rem;
+  min-height: 2.25rem;
+  padding: 0.35rem;
+  border-radius: 8px;
+  border: 1px solid rgba(100, 160, 220, 0.28);
+  background: rgba(21, 42, 69, 0.5);
+  color: var(--text-muted, rgba(232, 238, 245, 0.72));
+  cursor: pointer;
+  height: fit-content;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.admin-repeat-row__remove:hover {
+  color: #f0a8a8;
+  border-color: rgba(220, 100, 100, 0.35);
+}
+
+.admin-field select {
+  font: inherit;
+  padding: 0.5rem 0.65rem;
+  border-radius: 8px;
+  border: 1px solid var(--stroke, rgba(100, 160, 220, 0.18));
+  background: var(--bg-card, #152a45);
+  color: var(--text, #e8eef5);
+}
+
