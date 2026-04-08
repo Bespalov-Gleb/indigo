@@ -7,6 +7,9 @@
   "engines": {
     "node": ">=18"
   },
+  "dependencies": {
+    "better-sqlite3": "^11.8.1"
+  },
   "scripts": {
     "start": "node server.mjs",
     "dev": "node server.mjs",

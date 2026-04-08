@@ -8,12 +8,14 @@ import fs from "fs";
 import path from "path";
 import crypto from "crypto";
 import { fileURLToPath } from "url";
+import Database from "better-sqlite3";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = __dirname;
 const DATA_DIR = path.join(ROOT, "site", "data");
 const CALC_FILE = path.join(DATA_DIR, "calculator.json");
 const PORTFOLIO_FILE = path.join(DATA_DIR, "portfolio.json");
+const DB_DIR = path.join(ROOT, "data");
 
 function loadEnvFile(filePath) {
   if (!fs.existsSync(filePath)) return;
@@ -42,6 +44,7 @@ const HOST = process.env.HOST || "0.0.0.0";
 const NODE_ENV = process.env.NODE_ENV || "development";
 const CORS_ORIGIN = process.env.CORS_ORIGIN || "";
 const ADMIN_PASSWORD_RAW = process.env.ADMIN_PASSWORD;
+const DB_PATH = process.env.DB_PATH || path.join(DB_DIR, "indigo.db");
 
 if (!ADMIN_PASSWORD_RAW || !String(ADMIN_PASSWORD_RAW).trim()) {
   console.error("[FATAL] ADMIN_PASSWORD is required. Set it in environment (.env for local use).");
@@ -66,6 +69,58 @@ const MIME = {
 };
 
 const tokens = new Set();
+
+if (!fs.existsSync(DB_DIR)) fs.mkdirSync(DB_DIR, { recursive: true });
+const db = new Database(DB_PATH);
+db.pragma("journal_mode = WAL");
+db.exec(`
+  CREATE TABLE IF NOT EXISTS app_config (
+    key TEXT PRIMARY KEY,
+    payload TEXT NOT NULL,
+    updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+  );
+`);
+
+function readJsonFileSafe(filePath) {
+  if (!fs.existsSync(filePath)) return null;
+  try {
+    return JSON.parse(fs.readFileSync(filePath, "utf8"));
+  } catch (_) {
+    return null;
+  }
+}
+
+function getConfig(key) {
+  const row = db.prepare("SELECT payload FROM app_config WHERE key = ?").get(key);
+  if (!row) return null;
+  return JSON.parse(row.payload);
+}
+
+function saveConfig(key, data) {
+  const payload = JSON.stringify(data, null, 2);
+  db.prepare(
+    `
+    INSERT INTO app_config (key, payload, updated_at)
+    VALUES (?, ?, CURRENT_TIMESTAMP)
+    ON CONFLICT(key) DO UPDATE SET
+      payload = excluded.payload,
+      updated_at = CURRENT_TIMESTAMP
+  `
+  ).run(key, payload);
+}
+
+function bootstrapConfigFromFiles() {
+  if (!getConfig("calculator")) {
+    const calc = readJsonFileSafe(CALC_FILE);
+    if (calc) saveConfig("calculator", calc);
+  }
+  if (!getConfig("portfolio")) {
+    const pf = readJsonFileSafe(PORTFOLIO_FILE);
+    if (pf) saveConfig("portfolio", pf);
+  }
+}
+
+bootstrapConfigFromFiles();
 
 if (NODE_ENV === "production" && ADMIN_PASSWORD.toLowerCase() === "admin") {
   console.error("[FATAL] ADMIN_PASSWORD cannot be 'admin' in production.");
@@ -188,7 +243,30 @@ const server = http.createServer(async (req, res) => {
         status: "healthy",
         env: NODE_ENV,
         uptimeSec: Math.round(process.uptime()),
+        dbPath: DB_PATH,
       });
+      return;
+    }
+
+    if (req.method === "GET" && pathname === "/site/data/calculator.json") {
+      const data = getConfig("calculator");
+      if (!data) {
+        sendJson(res, 404, { error: "missing_calculator" });
+        return;
+      }
+      res.writeHead(200, { ...commonHeaders("application/json; charset=utf-8"), ...cors });
+      res.end(JSON.stringify(data, null, 2));
+      return;
+    }
+
+    if (req.method === "GET" && pathname === "/site/data/portfolio.json") {
+      const data = getConfig("portfolio");
+      if (!data) {
+        sendJson(res, 404, { error: "missing_portfolio" });
+        return;
+      }
+      res.writeHead(200, { ...commonHeaders("application/json; charset=utf-8"), ...cors });
+      res.end(JSON.stringify(data, null, 2));
       return;
     }
 
@@ -218,12 +296,11 @@ const server = http.createServer(async (req, res) => {
 
     if (pathname === "/api/admin/calculator") {
       if (req.method === "GET") {
-        ensureDataDir();
-        if (!fs.existsSync(CALC_FILE)) {
+        const data = getConfig("calculator");
+        if (!data) {
           sendJson(res, 404, { error: "missing_file" });
           return;
         }
-        const data = JSON.parse(fs.readFileSync(CALC_FILE, "utf8"));
         res.writeHead(200, { ...commonHeaders("application/json; charset=utf-8"), ...cors });
         res.end(JSON.stringify(data, null, 2));
         return;
@@ -245,8 +322,7 @@ const server = http.createServer(async (req, res) => {
         if (typeof body.addons !== "object" || body.addons === null) {
           body.addons = {};
         }
-        ensureDataDir();
-        fs.writeFileSync(CALC_FILE, JSON.stringify(body, null, 2), "utf8");
+        saveConfig("calculator", body);
         sendJson(res, 200, { ok: true });
         return;
       }
@@ -254,12 +330,11 @@ const server = http.createServer(async (req, res) => {
 
     if (pathname === "/api/admin/portfolio") {
       if (req.method === "GET") {
-        ensureDataDir();
-        if (!fs.existsSync(PORTFOLIO_FILE)) {
+        const data = getConfig("portfolio");
+        if (!data) {
           sendJson(res, 404, { error: "missing_file" });
           return;
         }
-        const data = JSON.parse(fs.readFileSync(PORTFOLIO_FILE, "utf8"));
         res.writeHead(200, { ...commonHeaders("application/json; charset=utf-8"), ...cors });
         res.end(JSON.stringify(data, null, 2));
         return;
@@ -271,8 +346,7 @@ const server = http.createServer(async (req, res) => {
           sendJson(res, 400, { error: "invalid_shape" });
           return;
         }
-        ensureDataDir();
-        fs.writeFileSync(PORTFOLIO_FILE, JSON.stringify(body, null, 2), "utf8");
+        saveConfig("portfolio", body);
         sendJson(res, 200, { ok: true });
         return;
       }
@@ -306,6 +380,7 @@ server.listen(PORT, HOST, () => {
   console.log(`Админка → http://127.0.0.1:${PORT}/site/admin/`);
   console.log(`Healthcheck → http://127.0.0.1:${PORT}/healthz`);
   console.log(`HOST=${HOST} NODE_ENV=${NODE_ENV}`);
+  console.log(`DB_PATH=${DB_PATH}`);
   console.log(`CORS_ORIGIN=${CORS_ORIGIN || "(auto: * in dev, disabled in production)"}`);
   console.log("ADMIN_PASSWORD=(from env)");
 });

@@ -26,6 +26,7 @@ npm start
 - `HOST=0.0.0.0`
 - `PORT=8787` (или порт платформы)
 - `CORS_ORIGIN=https://dev-studio-indigo.ru`
+- `DB_PATH=./data/indigo.db`
 - `ADMIN_PASSWORD=<strong-password>`
 
 Важно: `ADMIN_PASSWORD` обязателен. Сервер не запустится без него.
@@ -39,12 +40,14 @@ npm start
 3. Настройте health-check на `/healthz`.
 4. Для HTTPS используйте reverse proxy (Nginx/Cloudflare/платформа).
 
-## Структура данных
+## Хранение данных
 
-- Калькулятор: `site/data/calculator.json`
-- Портфолио: `site/data/portfolio.json`
+- Основной источник данных: SQLite база (`DB_PATH`, по умолчанию `./data/indigo.db`)
+- При первом запуске база автоматически заполняется из:
+  - `site/data/calculator.json`
+  - `site/data/portfolio.json`
 
-Из админки данные сохраняются через API в эти файлы, поэтому процесс должен иметь права на запись в `site/data/`.
+После инициализации админка пишет в БД.
 
 ## Проверка перед деплоем
 
@@ -64,7 +67,9 @@ docker run -d --name indigo-site \
   -e HOST=0.0.0.0 \
   -e PORT=8787 \
   -e CORS_ORIGIN=https://dev-studio-indigo.ru \
+  -e DB_PATH=/app/data/indigo.db \
   -e ADMIN_PASSWORD=<strong-password> \
+  -v $(pwd)/data:/app/data \
   indigo-site
 ```
 

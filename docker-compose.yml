@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   indigo:
     build:
@@ -14,5 +12,9 @@ services:
       HOST: ${HOST:-0.0.0.0}
       PORT: ${PORT:-8787}
       CORS_ORIGIN: ${CORS_ORIGIN:-}
+      DB_PATH: ${DB_PATH:-/app/data/indigo.db}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+    volumes:
+      - ./site/data:/app/site/data
+      - ./data:/app/data
 
