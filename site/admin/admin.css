@@ -219,6 +219,17 @@ button.admin__nav--text:hover {
   font-size: 0.9375rem;
 }
 
+#admin-toast {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 1200;
+  margin: 0;
+  min-width: 240px;
+  max-width: min(420px, calc(100vw - 2rem));
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
 .admin-msg--ok {
   background: rgba(100, 200, 140, 0.12);
   border: 1px solid rgba(100, 200, 140, 0.35);
