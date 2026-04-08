@@ -194,25 +194,20 @@
     var base = calcState.TYPE_BASE[t];
     if (!base) return null;
 
-    var minP = base.min;
-    var maxP = base.max;
-    var minW = base.weeksMin;
-    var maxW = base.weeksMax;
+    // Simple model: base type cost/time + selected addon cost/time
+    var totalP = base.min;
+    var totalW = base.weeksMin;
 
     var st = getAddonMults();
     Object.keys(st).forEach(function (key) {
       var e = applyExtra(st[key], key);
-      minP += e.dMinP;
-      maxP += e.dMaxP;
-      minW += e.dMinW;
-      maxW += e.dMaxW;
+      totalP += e.dMinP;
+      totalW += e.dMinW;
     });
 
     var step = calcState.roundingRub || 10000;
-    minP = Math.round(minP / step) * step;
-    maxP = Math.round(maxP / step) * step;
-    var singleP = Math.round((minP + maxP) / 2 / step) * step;
-    var singleW = Math.round((minW + maxW) / 2);
+    var singleP = Math.round(totalP / step) * step;
+    var singleW = Math.round(totalW);
 
     el.price.textContent = formatRub(singleP);
     el.time.textContent = formatWeeksSingle(singleW);
@@ -224,10 +219,10 @@
       addons: st,
       singleP: singleP,
       singleW: singleW,
-      minP: minP,
-      maxP: maxP,
-      minW: minW,
-      maxW: maxW,
+      minP: singleP,
+      maxP: singleP,
+      minW: singleW,
+      maxW: singleW,
     };
   }
 
