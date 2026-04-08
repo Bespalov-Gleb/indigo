@@ -90,8 +90,7 @@
         "Калькулятор не загрузился (/site/data/calculator.json). Проверьте файл и что открыли сайт по HTTP, не file://",
         false
       );
-      calcState = { version: 1, roundingRub: 10000, maxAddonQty: 12, types: [], addons: {} };
-      $("roundingRub").value = 10000;
+      calcState = { version: 1, maxAddonQty: 12, types: [], addons: {} };
       $("maxAddonQty").value = 12;
       renderCalcTypes([]);
     }
@@ -370,7 +369,6 @@
 
     return {
       version: (calcState && calcState.version) || 1,
-      roundingRub: parseInt($("roundingRub").value, 10) || 10000,
       maxAddonQty: parseInt($("maxAddonQty").value, 10) || 12,
       types: types,
       addons: {},
@@ -379,7 +377,6 @@
 
   async function refreshCalculatorForm() {
     calcState = await loadCalculator();
-    $("roundingRub").value = calcState.roundingRub != null ? calcState.roundingRub : 10000;
     $("maxAddonQty").value = calcState.maxAddonQty != null ? calcState.maxAddonQty : 12;
     var rootA = calcState.addons && typeof calcState.addons === "object" ? calcState.addons : null;
     (calcState.types || []).forEach(function (t) {

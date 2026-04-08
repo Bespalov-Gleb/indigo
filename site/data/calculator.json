@@ -1,6 +1,5 @@
 {
   "version": 1,
-  "roundingRub": 10000,
   "maxAddonQty": 12,
   "types": [
     {

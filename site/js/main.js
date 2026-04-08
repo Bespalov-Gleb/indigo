@@ -34,7 +34,6 @@
 
   var DEFAULT_CALC = {
     version: 1,
-    roundingRub: 10000,
     maxAddonQty: 12,
     types: [
       {
@@ -98,7 +97,6 @@
     TYPE_LABELS: {},
     EXTRA: {},
     MAX_ADDON_QTY: 12,
-    roundingRub: 10000,
     addonSummaryNames: { payments: "платежи", admin: "админ", integrations: "интеграции" },
   };
 
@@ -205,8 +203,7 @@
       totalW += e.dMinW;
     });
 
-    var step = calcState.roundingRub || 10000;
-    var singleP = Math.round(totalP / step) * step;
+    var singleP = Math.round(totalP);
     var singleW = Math.round(totalW);
 
     el.price.textContent = formatRub(singleP);
@@ -463,7 +460,6 @@
   function applyCalcConfig(cfg) {
     loadedCalcConfig = cfg;
     normalizeCalcConfig(loadedCalcConfig);
-    calcState.roundingRub = cfg.roundingRub != null ? cfg.roundingRub : 10000;
     calcState.MAX_ADDON_QTY = cfg.maxAddonQty != null ? cfg.maxAddonQty : 12;
     calcState.TYPE_BASE = {};
     calcState.TYPE_LABELS = {};
