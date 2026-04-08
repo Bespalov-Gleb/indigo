@@ -204,10 +204,16 @@
           '">' +
           '<legend class="admin-calc-addon-legend"><code>' +
           esc(key) +
-          '</code><button type="button" class="calc-addon-remove" title="Удалить опцию" aria-label="Удалить опцию">×</button></legend>' +
-          '<label class="admin-field admin-label-inline admin-label-inline--calc-addon"><input type="checkbox" data-field="enabled" ' +
+          '</code><span class="admin-calc-addon-legend__actions">' +
+          '<label class="admin-switch admin-switch--addon" title="Показывать опцию">' +
+          '<input type="checkbox" data-field="enabled" ' +
           (a.enabled !== false ? "checked" : "") +
-          " /> показывать</label>" +
+          " />" +
+          '<span class="admin-switch__track" aria-hidden="true"></span>' +
+          '<span class="admin-switch__text">вкл</span>' +
+          "</label>" +
+          '<button type="button" class="calc-addon-remove" title="Удалить опцию" aria-label="Удалить опцию">×</button>' +
+          "</span></legend>" +
           '<div class="admin-grid admin-grid--2">' +
           '<div class="admin-field"><label>Режим</label><select data-field="mode">' +
           '<option value="once"' +

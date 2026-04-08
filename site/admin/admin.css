@@ -529,23 +529,87 @@ button.admin__nav--text:hover {
   gap: 0.5rem;
 }
 
-.admin-label-inline--calc-addon {
-  margin: 0 0 0.75rem;
-  color: var(--text, #e8eef5);
-  text-transform: none;
-  letter-spacing: 0;
-  font-size: 0.9rem;
-}
-
 .admin-fieldset--nested-addon {
   margin-bottom: 1rem;
   background: rgba(5, 10, 18, 0.25);
 }
 
 .admin-calc-addon-legend {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.admin-calc-addon-legend__actions {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.45rem;
+}
+
+.admin-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.admin-switch input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+}
+
+.admin-switch__track {
+  position: relative;
+  width: 2rem;
+  height: 1.15rem;
+  border-radius: 999px;
+  background: rgba(160, 170, 190, 0.35);
+  border: 1px solid rgba(160, 170, 190, 0.45);
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.admin-switch__track::after {
+  content: "";
+  position: absolute;
+  top: 1px;
+  left: 1px;
+  width: 0.9rem;
+  height: 0.9rem;
+  border-radius: 50%;
+  background: #d7deea;
+  transition: transform 0.2s, background 0.2s;
+}
+
+.admin-switch__text {
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-muted, rgba(232, 238, 245, 0.62));
+}
+
+.admin-switch input[type="checkbox"]:checked + .admin-switch__track {
+  background: rgba(91, 159, 212, 0.48);
+  border-color: rgba(120, 180, 255, 0.72);
+}
+
+.admin-switch input[type="checkbox"]:checked + .admin-switch__track::after {
+  transform: translateX(0.84rem);
+  background: #ffffff;
+}
+
+.admin-switch input[type="checkbox"]:focus-visible + .admin-switch__track {
+  outline: 2px solid rgba(126, 184, 232, 0.7);
+  outline-offset: 2px;
+}
+
+.admin-switch input[type="checkbox"]:checked ~ .admin-switch__text {
+  color: var(--accent-2, #7eb8e8);
 }
 
 .calc-addon-remove {
