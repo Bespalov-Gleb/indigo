@@ -47,6 +47,11 @@
     <p id="admin-toast" class="admin-msg" hidden></p>
 
     <section id="panel-calc" class="admin-panel" data-panel="calc">
+      <div class="admin-calc-stickybar">
+        <button type="button" class="admin-chip-btn" id="calc-type-add">+ Тип</button>
+        <button type="button" class="primary" id="calc-save">Сохранить калькулятор</button>
+        <button type="button" id="calc-reload">Перезагрузить с сервера</button>
+      </div>
       <div class="admin-section">
         <h2>Общие параметры</h2>
         <div class="admin-grid admin-grid--2">
@@ -63,14 +68,9 @@
       <div class="admin-section">
         <div class="admin-section__row">
           <h2>Типы продуктов</h2>
-          <button type="button" class="admin-chip-btn" id="calc-type-add">+ Тип</button>
         </div>
         <p class="admin-hint">ID — латиница, цифры, дефис (как в коде). Снимите «Показывать в калькуляторе», чтобы скрыть тип на сайте.</p>
         <div id="calc-types-mount"></div>
-      </div>
-      <div class="admin-actions">
-        <button type="button" class="primary" id="calc-save">Сохранить калькулятор</button>
-        <button type="button" id="calc-reload">Перезагрузить с сервера</button>
       </div>
     </section>
 

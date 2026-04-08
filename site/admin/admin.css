@@ -109,6 +109,43 @@ button.admin__nav--text:hover {
   display: none !important;
 }
 
+.admin-calc-stickybar {
+  position: sticky;
+  top: 0.5rem;
+  z-index: 30;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+  border: 1px solid var(--stroke, rgba(100, 160, 220, 0.22));
+  border-radius: 10px;
+  background: rgba(5, 10, 18, 0.88);
+  backdrop-filter: blur(6px);
+}
+
+.admin-calc-stickybar button {
+  font: inherit;
+  font-weight: 600;
+  padding: 0.55rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  border: 1px solid var(--stroke, rgba(100, 160, 220, 0.28));
+  background: rgba(91, 159, 212, 0.12);
+  color: var(--text, #e8eef5);
+}
+
+.admin-calc-stickybar button.primary {
+  background: var(--accent, #5b9fd4);
+  color: #050a12;
+  border-color: transparent;
+}
+
+.admin-calc-stickybar button:hover {
+  filter: brightness(1.06);
+}
+
 .admin-login {
   position: relative;
   z-index: 100;
