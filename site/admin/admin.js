@@ -5,6 +5,12 @@
   var calcState = null;
   var portfolioState = null;
   var pfEditingSlug = null;
+  var pfSectionCollapsed = {
+    meta: true,
+    gallery: true,
+    video: true,
+    links: true,
+  };
 
   function $(id) {
     return document.getElementById(id);
@@ -551,6 +557,42 @@
     renderPfList();
   }
 
+  function detectPfSectionKey(sectionEl) {
+    if (!sectionEl) return "";
+    if (sectionEl.querySelector("#pf-meta-rows")) return "meta";
+    if (sectionEl.querySelector("#pf-gallery-rows")) return "gallery";
+    if (sectionEl.querySelector("#pf-video-fields")) return "video";
+    if (sectionEl.querySelector("#pf-link-rows")) return "links";
+    return "";
+  }
+
+  function setPfSectionCollapsed(sectionEl, key, collapsed) {
+    sectionEl.classList.toggle("is-collapsed", !!collapsed);
+    var btn = sectionEl.querySelector(".admin-section-toggle");
+    if (btn) {
+      btn.textContent = collapsed ? "Развернуть" : "Свернуть";
+      btn.setAttribute("aria-expanded", collapsed ? "false" : "true");
+    }
+    if (key) pfSectionCollapsed[key] = !!collapsed;
+  }
+
+  function initPfCollapsibleSections() {
+    document.querySelectorAll("#pf-editor .admin-section--nested").forEach(function (sectionEl) {
+      var h = sectionEl.querySelector("h3");
+      if (!h) return;
+      var key = detectPfSectionKey(sectionEl);
+      if (!h.querySelector(".admin-section-toggle")) {
+        h.classList.add("admin-section-title");
+        var btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "admin-section-toggle";
+        btn.setAttribute("data-pf-toggle-section", key || "misc");
+        h.appendChild(btn);
+      }
+      setPfSectionCollapsed(sectionEl, key, !!pfSectionCollapsed[key]);
+    });
+  }
+
   function readCaseFromForm() {
     var slug = $("pf-slug").value.trim();
     if (!SLUG_RE.test(slug)) {
@@ -778,6 +820,15 @@
     if (e.target.closest("[data-pf-link-remove]")) {
       e.target.closest(".admin-repeat-row").remove();
     }
+  });
+
+  bind("pf-editor", "click", function (e) {
+    var toggle = e.target.closest(".admin-section-toggle");
+    if (!toggle) return;
+    var sectionEl = toggle.closest(".admin-section--nested");
+    var key = detectPfSectionKey(sectionEl);
+    var collapsedNow = sectionEl.classList.contains("is-collapsed");
+    setPfSectionCollapsed(sectionEl, key, !collapsedNow);
   });
 
   bind("pf-back-list", "click", function () {
@@ -1053,4 +1104,5 @@
     showApp(true);
     loadAdminDataAfterLogin();
   }
+  initPfCollapsibleSections();
 })();

@@ -569,6 +569,35 @@ button.admin__nav--text:hover {
   font-weight: 600;
 }
 
+.admin-section-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.admin-section-toggle {
+  font: inherit;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.28rem 0.6rem;
+  border-radius: 6px;
+  border: 1px solid rgba(100, 160, 220, 0.3);
+  background: rgba(91, 159, 212, 0.12);
+  color: var(--accent-2, #7eb8e8);
+  cursor: pointer;
+}
+
+.admin-section-toggle:hover {
+  color: var(--text, #e8eef5);
+  border-color: rgba(120, 180, 255, 0.45);
+  background: rgba(91, 159, 212, 0.2);
+}
+
+.admin-section--nested.is-collapsed > :not(h3) {
+  display: none;
+}
+
 .admin-btn-danger {
   border-color: rgba(220, 100, 100, 0.45) !important;
   color: #f0a8a8 !important;
