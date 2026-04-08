@@ -5,6 +5,7 @@
   var calcState = null;
   var portfolioState = null;
   var pfEditingSlug = null;
+  var calcTypeAddonsCollapsed = {};
   var pfSectionCollapsed = {
     meta: true,
     gallery: true,
@@ -176,10 +177,24 @@
   function renderTypeAddonsHtml(addons) {
     var a0 = addons && typeof addons === "object" ? addons : {};
     var keys = Object.keys(a0);
+    var collapsed = !!renderTypeAddonsHtml._collapsed;
     return (
       '<div class="admin-calc-type-addons">' +
-      '<div class="admin-section__row"><h3 class="admin-calc-type-addons__title">Дополнительные опции</h3><button type="button" class="admin-chip-btn admin-chip-btn--small calc-addon-add">+ Опция</button></div>' +
+      '<div class="admin-section__row">' +
+      '<h3 class="admin-calc-type-addons__title">Дополнительные опции</h3>' +
+      '<div class="admin-calc-type-addons__controls">' +
+      '<button type="button" class="admin-chip-btn admin-chip-btn--small calc-addon-toggle" aria-expanded="' +
+      (collapsed ? "false" : "true") +
+      '">' +
+      (collapsed ? "Развернуть" : "Свернуть") +
+      "</button>" +
+      '<button type="button" class="admin-chip-btn admin-chip-btn--small calc-addon-add">+ Опция</button>' +
+      "</div>" +
+      "</div>" +
       '<p class="admin-hint admin-calc-type-addons__hint">Опции привязаны к <strong>этому</strong> типу. ID: латиница/цифры/дефис (например <span class="mono">payments</span>).</p>' +
+      '<div class="admin-calc-type-addons__body"' +
+      (collapsed ? ' hidden="hidden"' : "") +
+      ">" +
       keys.map(function (key) {
         var a = a0[key] || {};
         var once = a.mode !== "qty";
@@ -190,7 +205,7 @@
           '<legend class="admin-calc-addon-legend"><code>' +
           esc(key) +
           '</code><button type="button" class="calc-addon-remove" title="Удалить опцию" aria-label="Удалить опцию">×</button></legend>' +
-          '<label class="admin-field label inline" style="margin-bottom:0.75rem"><input type="checkbox" data-field="enabled" ' +
+          '<label class="admin-field admin-label-inline admin-label-inline--calc-addon"><input type="checkbox" data-field="enabled" ' +
           (a.enabled !== false ? "checked" : "") +
           " /> показывать</label>" +
           '<div class="admin-grid admin-grid--2">' +
@@ -217,6 +232,7 @@
           "</div></fieldset>"
         );
       }).join("") +
+      "</div>" +
       "</div>"
     );
   }
@@ -229,8 +245,12 @@
         var en = t.enabled !== false;
         var canDel = list.length > 1;
         var typeAddons = t.addons && typeof t.addons === "object" ? t.addons : deepClone(ADMIN_DEFAULT_ADDONS);
+        var k = t && t.id ? String(t.id) : "idx:" + i;
+        renderTypeAddonsHtml._collapsed = !!calcTypeAddonsCollapsed[k];
         return (
-          '<fieldset class="admin-fieldset admin-calc-type">' +
+          '<fieldset class="admin-fieldset admin-calc-type" data-calc-type-key="' +
+          esc(k) +
+          '">' +
           '<legend class="admin-calc-legend"><span class="admin-calc-legend__inner">' +
           '<span class="admin-calc-legend__title">Тип продукта</span>' +
           '<button type="button" class="calc-type-remove" data-index="' +
@@ -979,6 +999,20 @@
         weeks: 0,
       };
       renderCalcTypes(calcState.types);
+      return;
+    }
+
+    var toggleAddonsBtn = e.target.closest(".calc-addon-toggle");
+    if (toggleAddonsBtn) {
+      var typeRoot = toggleAddonsBtn.closest(".admin-calc-type");
+      var body = typeRoot ? typeRoot.querySelector(".admin-calc-type-addons__body") : null;
+      if (!typeRoot || !body) return;
+      var key = typeRoot.getAttribute("data-calc-type-key") || "";
+      var willExpand = body.hidden;
+      body.hidden = !willExpand;
+      toggleAddonsBtn.textContent = willExpand ? "Свернуть" : "Развернуть";
+      toggleAddonsBtn.setAttribute("aria-expanded", willExpand ? "true" : "false");
+      if (key) calcTypeAddonsCollapsed[key] = !willExpand;
       return;
     }
 

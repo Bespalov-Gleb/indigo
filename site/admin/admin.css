@@ -311,6 +311,21 @@ button.admin__nav--text:hover {
   font-size: 0.9375rem;
 }
 
+.admin-label-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.admin-label-inline input[type="checkbox"] {
+  width: 1rem;
+  height: 1rem;
+  margin: 0;
+  accent-color: var(--accent, #5b9fd4);
+  vertical-align: middle;
+  flex: 0 0 auto;
+}
+
 .admin-actions {
   display: flex;
   flex-wrap: wrap;
@@ -506,6 +521,20 @@ button.admin__nav--text:hover {
 .admin-calc-type-addons__title {
   margin: 0;
   font-size: 0.95rem;
+}
+
+.admin-calc-type-addons__controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.admin-label-inline--calc-addon {
+  margin: 0 0 0.75rem;
+  color: var(--text, #e8eef5);
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 0.9rem;
 }
 
 .admin-fieldset--nested-addon {
