@@ -18,13 +18,26 @@
       fig.className = "case-shot reveal";
       fig.setAttribute("data-reveal", "");
       fig.style.setProperty("--i", String(i));
-      var plate = document.createElement("div");
-      plate.className = mediaClass(item.variant);
-      plate.setAttribute("role", "img");
+      if (item.image) {
+        var imgWrap = document.createElement("div");
+        imgWrap.className = "case-shot__img-wrap";
+        var img = document.createElement("img");
+        img.className = "case-shot__img";
+        img.src = item.image;
+        img.alt = item.caption || "";
+        img.setAttribute("loading", "lazy");
+        img.setAttribute("decoding", "async");
+        imgWrap.appendChild(img);
+        fig.appendChild(imgWrap);
+      } else {
+        var plate = document.createElement("div");
+        plate.className = mediaClass(item.variant);
+        plate.setAttribute("role", "img");
+        fig.appendChild(plate);
+      }
       var cap = document.createElement("figcaption");
       cap.className = "case-shot__caption mono";
       cap.textContent = item.caption;
-      fig.appendChild(plate);
       fig.appendChild(cap);
       frag.appendChild(fig);
     });
@@ -34,7 +47,24 @@
   function buildVideo(video) {
     var wrap = document.createElement("div");
     wrap.className = "case-video__inner";
-    if (video && video.youtube) {
+    if (video && video.file) {
+      var ratioF = document.createElement("div");
+      ratioF.className = "case-video__ratio";
+      var vEl = document.createElement("video");
+      vEl.className = "case-video__file";
+      vEl.setAttribute("controls", "");
+      vEl.setAttribute("playsinline", "");
+      vEl.setAttribute("preload", "metadata");
+      vEl.src = video.file;
+      ratioF.appendChild(vEl);
+      wrap.appendChild(ratioF);
+      if (video.note) {
+        var noteF = document.createElement("p");
+        noteF.className = "case-video__note";
+        noteF.textContent = video.note;
+        wrap.appendChild(noteF);
+      }
+    } else if (video && video.youtube) {
       var ratio = document.createElement("div");
       ratio.className = "case-video__ratio";
       var iframe = document.createElement("iframe");

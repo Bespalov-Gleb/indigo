@@ -135,8 +135,8 @@
     var add = calcState.EXTRA[key];
     if (!add || mult <= 0) return { dMinP: 0, dMaxP: 0, dMinW: 0, dMaxW: 0 };
     return {
-      dMinP: add.price * 0.9 * mult,
-      dMaxP: add.price * 1.05 * mult,
+      dMinP: add.price * mult,
+      dMaxP: add.price * mult,
       dMinW: add.weeks * mult,
       dMaxW: add.weeks * mult,
     };

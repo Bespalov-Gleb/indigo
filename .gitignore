@@ -7,3 +7,7 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
+# Загруженные медиа портфолио (структура каталога — через .gitkeep)
+site/uploads/portfolio/*
+!site/uploads/portfolio/.gitkeep
+

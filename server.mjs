@@ -8,7 +8,11 @@ import fs from "fs";
 import path from "path";
 import crypto from "crypto";
 import { fileURLToPath } from "url";
+import { createRequire } from "module";
 import Database from "better-sqlite3";
+
+const require = createRequire(import.meta.url);
+const busboy = require("busboy");
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = __dirname;
@@ -16,6 +20,8 @@ const DATA_DIR = path.join(ROOT, "site", "data");
 const CALC_FILE = path.join(DATA_DIR, "calculator.json");
 const PORTFOLIO_FILE = path.join(DATA_DIR, "portfolio.json");
 const DB_DIR = path.join(ROOT, "data");
+const PORTFOLIO_UPLOAD_DIR = path.join(ROOT, "site", "uploads", "portfolio");
+const PORTFOLIO_UPLOAD_URL_PREFIX = "/site/uploads/portfolio/";
 
 function loadEnvFile(filePath) {
   if (!fs.existsSync(filePath)) return;
@@ -53,6 +59,18 @@ if (!ADMIN_PASSWORD_RAW || !String(ADMIN_PASSWORD_RAW).trim()) {
 
 const ADMIN_PASSWORD = String(ADMIN_PASSWORD_RAW).trim();
 
+const UPLOAD_MAX_IMAGE_MB = Math.min(
+  512,
+  Math.max(1, Number(process.env.UPLOAD_MAX_IMAGE_MB) || 25)
+);
+const UPLOAD_MAX_VIDEO_MB = Math.min(
+  2048,
+  Math.max(1, Number(process.env.UPLOAD_MAX_VIDEO_MB) || 200)
+);
+const UPLOAD_MAX_IMAGE_BYTES = UPLOAD_MAX_IMAGE_MB * 1024 * 1024;
+const UPLOAD_MAX_VIDEO_BYTES = UPLOAD_MAX_VIDEO_MB * 1024 * 1024;
+const UPLOAD_BOY_MAX_BYTES = Math.max(UPLOAD_MAX_IMAGE_BYTES, UPLOAD_MAX_VIDEO_BYTES);
+
 const MIME = {
   ".html": "text/html; charset=utf-8",
   ".js": "text/javascript; charset=utf-8",
@@ -64,13 +82,19 @@ const MIME = {
   ".jpg": "image/jpeg",
   ".jpeg": "image/jpeg",
   ".webp": "image/webp",
+  ".gif": "image/gif",
   ".ico": "image/x-icon",
   ".woff2": "font/woff2",
+  ".mp4": "video/mp4",
+  ".webm": "video/webm",
 };
 
 const tokens = new Set();
 
 if (!fs.existsSync(DB_DIR)) fs.mkdirSync(DB_DIR, { recursive: true });
+if (!fs.existsSync(PORTFOLIO_UPLOAD_DIR)) {
+  fs.mkdirSync(PORTFOLIO_UPLOAD_DIR, { recursive: true });
+}
 const db = new Database(DB_PATH);
 db.pragma("journal_mode = WAL");
 db.exec(`
@@ -219,6 +243,128 @@ function normPath(p) {
   return s.replace(/\/+$/, "") || "/";
 }
 
+const IMG_EXT = new Set([".jpg", ".jpeg", ".png", ".webp", ".gif"]);
+const VID_EXT = new Set([".mp4", ".webm"]);
+
+function portfolioUploadKindFromField(v) {
+  return v === "video" ? "video" : "image";
+}
+
+function handlePortfolioUpload(req, res, cors) {
+  if (!requireAuth(req, res)) return;
+
+  let kind = "image";
+  let savedUrl = null;
+  let rejectReason = null;
+  let filePromise = Promise.resolve();
+
+  const bb = busboy({
+    headers: req.headers,
+    limits: {
+      fileSize: UPLOAD_BOY_MAX_BYTES,
+      files: 1,
+      fields: 8,
+      parts: 12,
+    },
+  });
+
+  bb.on("field", (name, val) => {
+    if (name === "kind") kind = portfolioUploadKindFromField(String(val || "").trim());
+  });
+
+  bb.on("file", (name, file, info) => {
+    if (name !== "file") {
+      file.resume();
+      return;
+    }
+
+    const ext = path.extname(info.filename || "").toLowerCase();
+    const allowed = kind === "video" ? VID_EXT : IMG_EXT;
+    if (!allowed.has(ext)) {
+      rejectReason = { status: 400, err: "invalid_type" };
+      file.resume();
+      return;
+    }
+
+    const maxBytes = kind === "video" ? UPLOAD_MAX_VIDEO_BYTES : UPLOAD_MAX_IMAGE_BYTES;
+    const fname = crypto.randomBytes(18).toString("hex") + ext;
+    const dest = path.join(PORTFOLIO_UPLOAD_DIR, fname);
+
+    filePromise = new Promise((resolve, reject) => {
+      const ws = fs.createWriteStream(dest);
+      let hitLimit = false;
+      file.once("limit", () => {
+        hitLimit = true;
+        try {
+          ws.destroy();
+        } catch (_) {}
+      });
+      ws.on("error", reject);
+      file.on("error", reject);
+      ws.on("finish", () => {
+        if (hitLimit) {
+          try {
+            fs.unlinkSync(dest);
+          } catch (_) {}
+          rejectReason = rejectReason || { status: 413, err: "too_large" };
+          resolve();
+          return;
+        }
+        if (rejectReason) {
+          try {
+            fs.unlinkSync(dest);
+          } catch (_) {}
+          resolve();
+          return;
+        }
+        try {
+          const st = fs.statSync(dest);
+          if (st.size > maxBytes) {
+            fs.unlinkSync(dest);
+            rejectReason = { status: 413, err: "too_large" };
+            resolve();
+            return;
+          }
+        } catch (_) {
+          rejectReason = { status: 500, err: "stat_failed" };
+          resolve();
+          return;
+        }
+        savedUrl = PORTFOLIO_UPLOAD_URL_PREFIX + fname;
+        resolve();
+      });
+      file.pipe(ws);
+    });
+  });
+
+  bb.on("error", () => {
+    rejectReason = rejectReason || { status: 400, err: "parse_error" };
+  });
+
+  bb.on("finish", async () => {
+    const headers = { ...commonHeaders("application/json; charset=utf-8"), ...cors };
+    try {
+      await filePromise;
+    } catch (_) {
+      rejectReason = rejectReason || { status: 500, err: "write_failed" };
+    }
+    if (rejectReason) {
+      res.writeHead(rejectReason.status, headers);
+      res.end(JSON.stringify({ error: rejectReason.err }));
+      return;
+    }
+    if (!savedUrl) {
+      res.writeHead(400, headers);
+      res.end(JSON.stringify({ error: "no_file" }));
+      return;
+    }
+    res.writeHead(200, headers);
+    res.end(JSON.stringify({ url: savedUrl }));
+  });
+
+  req.pipe(bb);
+}
+
 const server = http.createServer(async (req, res) => {
   const url = new URL(req.url || "/", `http://127.0.0.1`);
   const pathname = normPath(url.pathname);
@@ -291,6 +437,11 @@ const server = http.createServer(async (req, res) => {
       if (t) tokens.delete(t);
       res.writeHead(200, { ...commonHeaders("application/json; charset=utf-8"), ...cors });
       res.end(JSON.stringify({ ok: true }));
+      return;
+    }
+
+    if (req.method === "POST" && pathname === "/api/admin/upload-portfolio") {
+      handlePortfolioUpload(req, res, cors);
       return;
     }
 

@@ -137,6 +137,39 @@
     if (!r.ok) throw new Error("pf_save");
   }
 
+  async function uploadPortfolioMedia(file, kind) {
+    var fd = new FormData();
+    fd.append("kind", kind);
+    fd.append("file", file);
+    var t = getToken();
+    var headers = {};
+    if (t) headers.Authorization = "Bearer " + t;
+    var r = await fetch("/api/admin/upload-portfolio", {
+      method: "POST",
+      headers: headers,
+      body: fd,
+    });
+    var data = await r.json().catch(function () {
+      return {};
+    });
+    if (r.status === 401) {
+      var ue = new Error("unauthorized");
+      ue.code = "unauthorized";
+      throw ue;
+    }
+    if (!r.ok) {
+      var fe = new Error(data.error || "upload_failed");
+      fe.code = "upload";
+      throw fe;
+    }
+    if (!data.url) {
+      var ne = new Error("no_url");
+      ne.code = "upload";
+      throw ne;
+    }
+    return data.url;
+  }
+
   function esc(s) {
     return String(s)
       .replace(/&/g, "&amp;")
@@ -488,6 +521,107 @@
     sel.innerHTML = opts;
   }
 
+  function pfGalleryVariantOptions(selected) {
+    return ["", "b", "c", "d", "e", "f", "g", "h"]
+      .map(function (v) {
+        return (
+          '<option value="' +
+          esc(v) +
+          '"' +
+          (selected === v ? " selected" : "") +
+          ">" +
+          (v || "базовый") +
+          "</option>"
+        );
+      })
+      .join("");
+  }
+
+  function pfGalleryRowHtml(g) {
+    g = g || {};
+    var img = g.image || "";
+    var hasImg = !!img;
+    return (
+      '<div class="admin-repeat-row admin-repeat-row--gal">' +
+      '<div class="admin-field"><label>Вариант</label><select data-pf-gal-var>' +
+      pfGalleryVariantOptions(g.variant != null ? g.variant : "") +
+      "</select></div>" +
+      '<div class="admin-field admin-field--full">' +
+      "<label>Фото</label>" +
+      '<div class="admin-upload-line">' +
+      '<input type="hidden" data-pf-gal-img value="' +
+      esc(img) +
+      '" />' +
+      '<button type="button" class="admin-chip-btn admin-chip-btn--small" data-pf-gal-pick>Файл…</button>' +
+      '<input type="file" data-pf-gal-file accept="image/jpeg,image/png,image/webp,image/gif,.jpg,.jpeg,.png,.webp,.gif" hidden />' +
+      '<button type="button" class="admin-chip-btn admin-chip-btn--small" data-pf-gal-img-clear' +
+      (hasImg ? "" : " hidden") +
+      ">Сбросить</button>" +
+      "</div>" +
+      '<p class="admin-hint admin-gal-path mono" data-pf-gal-path>' +
+      esc(hasImg ? img : "Файл не выбран") +
+      "</p>" +
+      '<div class="admin-gal-thumb"' +
+      (hasImg ? "" : " hidden") +
+      ' data-pf-gal-thumb><img alt="" decoding="async" /></div>' +
+      "</div>" +
+      '<div class="admin-field"><label>Подпись</label><input type="text" data-pf-gal-cap value="' +
+      esc(g.caption || "") +
+      '" /></div>' +
+      '<button type="button" class="admin-repeat-row__remove" data-pf-gal-remove>×</button></div>'
+    );
+  }
+
+  function syncGalleryRowThumb(row) {
+    if (!row) return;
+    var h = row.querySelector("[data-pf-gal-img]");
+    var thumb = row.querySelector("[data-pf-gal-thumb]");
+    var im = thumb && thumb.querySelector("img");
+    var pathEl = row.querySelector("[data-pf-gal-path]");
+    var clr = row.querySelector("[data-pf-gal-img-clear]");
+    var v = h && h.value ? h.value.trim() : "";
+    if (pathEl) pathEl.textContent = v || "Файл не выбран";
+    if (v) {
+      if (thumb) thumb.hidden = false;
+      if (im) im.src = v;
+      if (clr) clr.hidden = false;
+    } else {
+      if (thumb) thumb.hidden = true;
+      if (im) im.removeAttribute("src");
+      if (clr) clr.hidden = true;
+    }
+  }
+
+  function pfSyncVideoBlocks() {
+    var sel = $("pf-video-source");
+    var src = sel ? sel.value : "none";
+    var yt = $("pf-video-youtube-block");
+    var fb = $("pf-video-file-block");
+    var nw = $("pf-video-note-wrap");
+    if (yt) yt.hidden = src !== "youtube";
+    if (fb) fb.hidden = src !== "file";
+    if (nw) nw.hidden = src === "none";
+  }
+
+  function pfSyncVideoFilePreview() {
+    var urlEl = $("pf-video-file-url");
+    var prev = $("pf-video-file-preview");
+    var lbl = $("pf-video-file-pathlbl");
+    var clr = $("pf-video-file-clear");
+    var u = urlEl && urlEl.value ? urlEl.value.trim() : "";
+    if (lbl) lbl.textContent = u || "Файл не выбран";
+    if (prev) {
+      if (u) {
+        prev.hidden = false;
+        prev.src = u;
+      } else {
+        prev.hidden = true;
+        prev.removeAttribute("src");
+      }
+    }
+    if (clr) clr.hidden = !u;
+  }
+
   function openPfEditor(slug) {
     if (!portfolioState || !portfolioState.cases || !portfolioState.cases[slug]) return;
     pfEditingSlug = slug;
@@ -516,40 +650,20 @@
       .join("");
 
     var gal = c.gallery || [];
-    $("pf-gallery-rows").innerHTML = gal
-      .map(function (g) {
-        return (
-          '<div class="admin-repeat-row admin-repeat-row--gal">' +
-          '<div class="admin-field"><label>Вариант</label><select data-pf-gal-var>' +
-          ["", "b", "c", "d", "e", "f", "g", "h"]
-            .map(function (v) {
-              return (
-                "<option value=\"" +
-                esc(v) +
-                '"' +
-                (g.variant === v ? " selected" : "") +
-                ">" +
-                (v || "базовый") +
-                "</option>"
-              );
-            })
-            .join("") +
-          "</select></div>" +
-          '<div class="admin-field"><label>Подпись</label><input type="text" data-pf-gal-cap value="' +
-          esc(g.caption || "") +
-          '" /></div>' +
-          '<button type="button" class="admin-repeat-row__remove" data-pf-gal-remove>×</button></div>'
-        );
-      })
-      .join("");
+    $("pf-gallery-rows").innerHTML = gal.map(pfGalleryRowHtml).join("");
+    document.querySelectorAll("#pf-gallery-rows .admin-repeat-row--gal").forEach(syncGalleryRowThumb);
 
     var vid = c.video;
-    var hasVid = !!(vid && vid.youtube);
-    $("pf-video-on").checked = hasVid;
-    $("pf-video-id").value = hasVid ? vid.youtube : "";
-    $("pf-video-note").value = hasVid && vid.note ? vid.note : "";
-    $("pf-video-fields").style.opacity = hasVid ? "1" : "0.45";
-    $("pf-video-fields").style.pointerEvents = hasVid ? "" : "none";
+    var vsrc = "none";
+    if (vid && vid.file) vsrc = "file";
+    else if (vid && vid.youtube) vsrc = "youtube";
+    $("pf-video-source").value = vsrc;
+    $("pf-video-id").value = vsrc === "youtube" && vid && vid.youtube ? vid.youtube : "";
+    $("pf-video-note").value = vid && vid.note ? vid.note : "";
+    $("pf-video-file-url").value = vsrc === "file" && vid && vid.file ? vid.file : "";
+    $("pf-video-file-input").value = "";
+    pfSyncVideoBlocks();
+    pfSyncVideoFilePreview();
 
     var links = c.links || [];
     $("pf-link-rows").innerHTML = links
@@ -631,7 +745,11 @@
     document.querySelectorAll(".admin-repeat-row--gal").forEach(function (row) {
       var v = row.querySelector("[data-pf-gal-var]");
       var cap = row.querySelector("[data-pf-gal-cap]");
-      gallery.push({ variant: v ? v.value : "", caption: cap ? cap.value.trim() : "" });
+      var hid = row.querySelector("[data-pf-gal-img]");
+      var item = { variant: v ? v.value : "", caption: cap ? cap.value.trim() : "" };
+      var ip = hid && hid.value ? hid.value.trim() : "";
+      if (ip) item.image = ip;
+      gallery.push(item);
     });
     var links = [];
     document.querySelectorAll(".admin-repeat-row--link").forEach(function (row) {
@@ -647,10 +765,19 @@
       }
     });
     var video = null;
-    if ($("pf-video-on").checked) {
+    var vsrc = $("pf-video-source").value;
+    var noteTrim = $("pf-video-note").value.trim();
+    if (vsrc === "youtube") {
       var yid = $("pf-video-id").value.trim();
       if (yid) {
-        video = { youtube: yid, note: $("pf-video-note").value.trim() || undefined };
+        video = { youtube: yid };
+        if (noteTrim) video.note = noteTrim;
+      }
+    } else if (vsrc === "file") {
+      var fu = $("pf-video-file-url").value.trim();
+      if (fu) {
+        video = { file: fu };
+        if (noteTrim) video.note = noteTrim;
       }
     }
     return {
@@ -788,10 +915,39 @@
     renderPfHome();
   });
 
-  bind("pf-video-on", "change", function () {
-    var on = $("pf-video-on").checked;
-    $("pf-video-fields").style.opacity = on ? "1" : "0.45";
-    $("pf-video-fields").style.pointerEvents = on ? "" : "none";
+  bind("pf-video-source", "change", function () {
+    pfSyncVideoBlocks();
+  });
+
+  bind("pf-video-file-pick", "click", function () {
+    $("pf-video-file-input").click();
+  });
+
+  bind("pf-video-file-clear", "click", function () {
+    $("pf-video-file-url").value = "";
+    $("pf-video-file-input").value = "";
+    pfSyncVideoFilePreview();
+  });
+
+  bind("pf-video-file-input", "change", async function () {
+    var inp = $("pf-video-file-input");
+    if (!inp || !inp.files || !inp.files[0]) return;
+    var f = inp.files[0];
+    try {
+      var url = await uploadPortfolioMedia(f, "video");
+      $("pf-video-file-url").value = url;
+      pfSyncVideoFilePreview();
+      showToast("Видео загружено.", true);
+    } catch (e) {
+      if (e.code === "unauthorized") {
+        showToast("Войдите снова.", false);
+        setToken("");
+        showApp(false);
+      } else {
+        showToast("Загрузка видео не удалась.", false);
+      }
+      inp.value = "";
+    }
   });
 
   bind("pf-meta-add", "click", function () {
@@ -810,22 +966,56 @@
 
   bind("pf-gallery-add", "click", function () {
     var wrap = document.createElement("div");
-    wrap.className = "admin-repeat-row admin-repeat-row--gal";
-    wrap.innerHTML =
-      '<div class="admin-field"><label>Вариант</label><select data-pf-gal-var>' +
-      ["", "b", "c", "d", "e", "f", "g", "h"]
-        .map(function (v) {
-          return '<option value="' + esc(v) + '">' + (v || "базовый") + "</option>";
-        })
-        .join("") +
-      '</select></div><div class="admin-field"><label>Подпись</label><input type="text" data-pf-gal-cap /></div><button type="button" class="admin-repeat-row__remove" data-pf-gal-remove>×</button>';
-    $("pf-gallery-rows").appendChild(wrap);
+    wrap.innerHTML = pfGalleryRowHtml({});
+    var row = wrap.firstElementChild;
+    $("pf-gallery-rows").appendChild(row);
+    syncGalleryRowThumb(row);
   });
 
   bind("pf-gallery-rows", "click", function (e) {
     if (e.target.closest("[data-pf-gal-remove]")) {
       e.target.closest(".admin-repeat-row").remove();
+      return;
     }
+    if (e.target.closest("[data-pf-gal-pick]")) {
+      var row = e.target.closest(".admin-repeat-row--gal");
+      if (!row) return;
+      var finp = row.querySelector("[data-pf-gal-file]");
+      if (finp) finp.click();
+      return;
+    }
+    if (e.target.closest("[data-pf-gal-img-clear]")) {
+      var row2 = e.target.closest(".admin-repeat-row--gal");
+      if (!row2) return;
+      var hid = row2.querySelector("[data-pf-gal-img]");
+      if (hid) hid.value = "";
+      var fi = row2.querySelector("[data-pf-gal-file]");
+      if (fi) fi.value = "";
+      syncGalleryRowThumb(row2);
+    }
+  });
+
+  bind("pf-gallery-rows", "change", async function (e) {
+    var inp = e.target.closest("[data-pf-gal-file]");
+    if (!inp || !inp.files || !inp.files[0]) return;
+    var row = inp.closest(".admin-repeat-row--gal");
+    var f = inp.files[0];
+    try {
+      var url = await uploadPortfolioMedia(f, "image");
+      var hid = row && row.querySelector("[data-pf-gal-img]");
+      if (hid) hid.value = url;
+      syncGalleryRowThumb(row);
+      showToast("Изображение загружено.", true);
+    } catch (err) {
+      if (err.code === "unauthorized") {
+        showToast("Войдите снова.", false);
+        setToken("");
+        showApp(false);
+      } else {
+        showToast("Загрузка изображения не удалась.", false);
+      }
+    }
+    inp.value = "";
   });
 
   bind("pf-link-add", "click", function () {

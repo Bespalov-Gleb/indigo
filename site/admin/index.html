@@ -162,13 +162,33 @@
             </div>
             <div class="admin-section admin-section--nested">
               <h3>Видео</h3>
-              <label class="admin-field label inline"><input type="checkbox" id="pf-video-on" /> Встроить YouTube</label>
-              <div id="pf-video-fields" class="admin-grid admin-grid--2" style="margin-top:0.75rem">
+              <div id="pf-video-fields">
                 <div class="admin-field">
-                  <label for="pf-video-id">ID ролика</label>
-                  <input type="text" id="pf-video-id" placeholder="M7lc1UVf-VE" />
+                  <label for="pf-video-source">Источник</label>
+                  <select id="pf-video-source">
+                    <option value="none">Нет</option>
+                    <option value="youtube">YouTube</option>
+                    <option value="file">Файл (mp4 / webm)</option>
+                  </select>
                 </div>
-                <div class="admin-field admin-field--full">
+                <div id="pf-video-youtube-block" class="admin-grid admin-grid--2" hidden style="margin-top: 0.75rem">
+                  <div class="admin-field">
+                    <label for="pf-video-id">ID ролика</label>
+                    <input type="text" id="pf-video-id" placeholder="M7lc1UVf-VE" />
+                  </div>
+                </div>
+                <div id="pf-video-file-block" class="admin-field admin-field--full" hidden style="margin-top: 0.75rem">
+                  <label>Файл видео</label>
+                  <input type="hidden" id="pf-video-file-url" value="" />
+                  <div class="admin-upload-line">
+                    <button type="button" class="admin-chip-btn admin-chip-btn--small" id="pf-video-file-pick">Выбрать файл…</button>
+                    <input type="file" id="pf-video-file-input" accept="video/mp4,video/webm,.mp4,.webm" hidden />
+                    <button type="button" class="admin-chip-btn admin-chip-btn--small" id="pf-video-file-clear" hidden>Сбросить</button>
+                  </div>
+                  <p class="admin-hint mono" id="pf-video-file-pathlbl">Файл не выбран</p>
+                  <video id="pf-video-file-preview" controls muted playsinline hidden></video>
+                </div>
+                <div class="admin-field admin-field--full" id="pf-video-note-wrap" style="margin-top: 0.75rem">
                   <label for="pf-video-note">Подпись под плеером</label>
                   <input type="text" id="pf-video-note" />
                 </div>
